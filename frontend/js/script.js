@@ -16,10 +16,20 @@ $(document).ready(function() {
         let email = $("#login-email").val();
         let password = $("#login-password").val();
         if(email && password) {
-            alert("Login successful!");
-            // send login data to backend here
+            $.ajax({
+                url: "http://127.0.0.1:5000/login",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ email: email, password: password }),
+                success: function(response) {
+                    alert(response.message);
+                },
+                error: function() {
+                    alert("Error during login request.");
+                }
+            });
         } else {
-            alert("Please fill in both fields.");
+            alert("Missing data.");
         }
     });
 
@@ -30,8 +40,18 @@ $(document).ready(function() {
         let password = $("#register-password").val();
 
         if(name && email && password) {
-            alert("Registration successful!");
-            // send registration data to backend here
+            $.ajax({
+                url: "http://127.0.0.1:5000/register",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ name: name, email: email, password: password }),
+                success: function(response) {
+                    alert(response.message);
+                },
+                error: function() {
+                    alert("Error during registration request.");
+                }
+            });
         } else {
             alert("Please fill in all fields.");
         }
