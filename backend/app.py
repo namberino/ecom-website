@@ -2,24 +2,26 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import MySQLdb
 import bcrypt
+from dotenv import load_dotenv
+import os
 
-
+load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
 
 # mysql configs
-app.config["MYSQL_HOST"] = "localhost"
-app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = "Binhnam2402"
-app.config["MYSQL_DB"] = "ecomdb"
+app.config["MYSQL_HOST"] = os.getenv("MYSQL_HOST")
+app.config["MYSQL_USER"] = os.getenv("MYSQL_USER")
+app.config["MYSQL_PASSWORD"] = os.getenv("MYSQL_PASSWORD")
+app.config["MYSQL_DB"] = os.getenv("MYSQL_DB")
 
 # connect to mysql
 db = MySQLdb.connect(
-    host="localhost",
-    user="root",
-    passwd="Binhnam2402",
-    db="ecomdb"
+    host=os.getenv("MYSQL_HOST"),
+    user=os.getenv("MYSQL_USER"),
+    passwd=os.getenv("MYSQL_PASSWORD"),
+    db=os.getenv("MYSQL_DB")
 )
 
 
