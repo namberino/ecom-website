@@ -1,5 +1,5 @@
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: "Roboto", sans-serif;
     background-color: #f3f4f6;
     display: flex;
     justify-content: center;
@@ -31,7 +31,7 @@ h2 {
 }
 
 .form-group input {
-    width: 100%;
+    width: 95%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
