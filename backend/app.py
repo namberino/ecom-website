@@ -61,14 +61,9 @@ def register():
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
     # insert data into db
-    try:
-        cursor.execute(
-            "insert into Users (name, email, password) values (%s, %s, %s)", (name, email, hashed_password.decode('utf-8'))
-        )
-        db.commit()
-        return jsonify({"status": "success", "message": "Registration successful!"})
-    except MySQLdb.IntegrityError:
-        return jsonify({"status": "fail", "message": "Email already exists!"})
+    cursor.execute("insert into Users (name, email, password) values (%s, %s, %s)", (name, email, hashed_password.decode('utf-8')))
+    db.commit()
+    return jsonify({"status": "success", "message": "Registration successful!"})
 
 
 if __name__ == "__main__":
