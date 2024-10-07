@@ -54,7 +54,9 @@ $(document).ready(function() {
                 data: JSON.stringify({ name: name, email: email, password: password }),
                 success: function(response) {
                     alert(response.message);
-                    alert("Please login to your new account.")
+                    alert("Please login to your new account.");
+                    $("#register-form").hide();
+                    $("#login-form").show();
                 },
                 error: function() {
                     alert("Error during registration request.");
