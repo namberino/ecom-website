@@ -47,6 +47,7 @@ $(document).ready(function() {
                 data: JSON.stringify({ name: name, email: email, password: password }),
                 success: function(response) {
                     alert(response.message);
+                    alert("Please login to your new account.")
                 },
                 error: function() {
                     alert("Error during registration request.");
