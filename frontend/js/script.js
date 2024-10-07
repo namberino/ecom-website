@@ -5,11 +5,13 @@ $(document).ready(function() {
         $("#register-form").show();
     });
 
+
     // login form toggle
     $("#show-login").click(function() {
         $("#register-form").hide();
         $("#login-form").show();
     });
+
 
     // login button handling
     $("#login-btn").click(function() {
@@ -33,6 +35,7 @@ $(document).ready(function() {
         }
     });
 
+    
     // register button handling
     $("#register-btn").click(function() {
         let name = $("#register-name").val();
