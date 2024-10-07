@@ -17,6 +17,7 @@ $(document).ready(function() {
     $("#login-btn").click(function() {
         let email = $("#login-email").val();
         let password = $("#login-password").val();
+
         if(email && password) {
             $.ajax({
                 url: "http://127.0.0.1:5000/login",
@@ -25,6 +26,9 @@ $(document).ready(function() {
                 data: JSON.stringify({ email: email, password: password }),
                 success: function(response) {
                     alert(response.message);
+                    if (response.role) {
+                        alert("User type: " + response.role);
+                    }
                 },
                 error: function() {
                     alert("Error during login request.");
@@ -35,7 +39,7 @@ $(document).ready(function() {
         }
     });
 
-    
+
     // register button handling
     $("#register-btn").click(function() {
         let name = $("#register-name").val();

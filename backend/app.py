@@ -28,14 +28,14 @@ def login():
 
     # get the password of email from db
     cursor = db.cursor()
-    cursor.execute("select password from Users where email = %s", (email,))
+    cursor.execute("select password, role from Users where email = %s", (email,))
     result = cursor.fetchone()
 
     # compare password with given password (with hashing)
     if result:
         hashed_password = result[0].encode('utf-8')
         if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
-            return jsonify({"status": "success", "message": "Login successful!"})
+            return jsonify({"status": "success", "message": "Login successful!", "role": result[1]})
         else:
             return jsonify({"status": "fail", "message": "Invalid credentials!"})
     else:
@@ -61,7 +61,7 @@ def register():
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
     # insert data into db
-    cursor.execute("insert into Users (name, email, password) values (%s, %s, %s)", (name, email, hashed_password.decode('utf-8')))
+    cursor.execute("insert into Users (name, email, password, role) values (%s, %s, %s, %s)", (name, email, hashed_password.decode('utf-8'), "user"))
     db.commit()
     return jsonify({"status": "success", "message": "Registration successful!"})
 

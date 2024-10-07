@@ -6,5 +6,6 @@ create table Users (
     name varchar(100) not null,
     email varchar(100) unique not null,
     password varchar(255) not null,
+    role varchar(10) not null,
     primary key (id)
 );
