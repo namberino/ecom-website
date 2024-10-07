@@ -29,7 +29,7 @@ $(document).ready(function() {
                 }
             });
         } else {
-            alert("Missing data.");
+            alert("Missing data. Please fill in all fields.");
         }
     });
 
@@ -54,7 +54,7 @@ $(document).ready(function() {
                 }
             });
         } else {
-            alert("Please fill in all fields.");
+            alert("Missing data. Please fill in all fields.");
         }
     });
 });
