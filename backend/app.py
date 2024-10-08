@@ -91,7 +91,7 @@ def validate_session():
     cursor = db.cursor()
 
     # check if session is valid
-    cursor.execute('select * from Users where email = "%s" and password = "%s" and role = "%s"', (session_str[0], session_str[1], session_str[2]))
+    cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
     valid_user = cursor.fetchone()
     if valid_user:
         return jsonify({"status": "success", "message": "Valid session string."})

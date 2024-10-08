@@ -83,7 +83,7 @@
                             alert(response.message);
                             if (response.session_string) {
                                 sessionStorage.setItem("session_string", response.session_string);
-                                window.location.href("./home.html");
+                                window.open("./home.html", "_self");
                             }
                         },
                         error: function() {
