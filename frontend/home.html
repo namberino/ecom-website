@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Website</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Hello world</h2>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let session_string = sessionStorage.getItem("session_string");
+
+            if (session_string != null) {
+                $.ajax({
+                    url: "http://127.0.0.1:5000/validate_session",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ session_string: session_string }),
+                    success: function(response) {
+                        alert(response.message);
+                        if (response.status == "success") {
+                            alert("Welcome");
+                        } else if (response.status == "fail") {
+                            alert("Failed");
+                            sessionStorage.setItem("session_string", "");
+                            window.open("./index.html", "_self");
+                        }
+                    },
+                    error: function() {
+                        alert("Error during session string validation.");
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
