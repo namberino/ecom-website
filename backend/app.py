@@ -23,7 +23,7 @@ db = MySQLdb.connect(
 )
 
 
-def generate_session_string(data):
+def encrypt_session_string(data):
     encrypted_data = rsa.encrypt(data.encode(), public_key)
     return base64.b64encode(encrypted_data).decode()
 
@@ -50,7 +50,7 @@ def login():
         
         if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
             session_str = f"{email};{result[0]};{result[1]}"
-            encrypted_session_str = generate_session_string(session_str)
+            encrypted_session_str = encrypt_session_string(session_str)
 
             return jsonify({"status": "success", "message": "Login successful!", "session_string": encrypted_session_str})
         else:
@@ -97,6 +97,7 @@ def validate_session():
         return jsonify({"status": "success", "message": "Valid session string."})
 
     return jsonify({"status": "fail", "message": "Invalid session string."})
+
 
 if __name__ == "__main__":
     app.run(debug=True)
