@@ -24,9 +24,7 @@
                     data: JSON.stringify({ session_string: session_string }),
                     success: function(response) {
                         alert(response.message);
-                        if (response.status == "success") {
-                            alert("Welcome");
-                        } else if (response.status == "fail") {
+                        if (response.status == "fail") {
                             alert("Failed");
                             sessionStorage.setItem("session_string", "");
                             window.open("./index.html", "_self");
