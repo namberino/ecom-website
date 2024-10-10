@@ -25,7 +25,7 @@ db = MySQLdb.connect(
 
 def encrypt_session_string(data):
     encrypted_data = rsa.encrypt(data.encode(), public_key)
-    return base64.b64encode(encrypted_data).decode()
+    return base64.b64encode(encrypted_data).decode() # decode since b64encode returns byte string
 
 
 def decrypt_session_string(data):
@@ -46,9 +46,9 @@ def login():
 
     # compare password with given password (with hashing)
     if result:
-        hashed_password = result[0].encode('utf-8')
+        hashed_password = result[0].encode()
         
-        if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
+        if bcrypt.checkpw(password.encode(), hashed_password):
             session_str = f"{email};{result[0]};{result[1]}"
             encrypted_session_str = encrypt_session_string(session_str)
 
@@ -75,10 +75,10 @@ def register():
         return jsonify({"status": "fail", "message": "Email already exists!"})
 
     # hash password
-    hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+    hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
     # insert data into db
-    cursor.execute("insert into Users (name, email, password, role) values (%s, %s, %s, %s)", (name, email, hashed_password.decode('utf-8'), "user"))
+    cursor.execute("insert into Users (name, email, password, role) values (%s, %s, %s, %s)", (name, email, hashed_password.decode(), "user"))
     db.commit()
     return jsonify({"status": "success", "message": "Registration successful!"})
 

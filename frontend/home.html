@@ -15,10 +15,8 @@
     <script>
         $(document).ready(function() {
             let session_string = sessionStorage.getItem("session_string");
-            console.log(session_string);
 
             if (session_string != null) {
-                console.log("Not null");
                 $.ajax({
                     url: "http://127.0.0.1:5000/validate_session",
                     type: "POST",
