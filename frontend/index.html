@@ -83,7 +83,14 @@
                             alert(response.message);
                             if (response.session_string) {
                                 sessionStorage.setItem("session_string", response.session_string);
-                                window.open("./home.html", "_self");
+                                
+                                if (response.role == "admin") {
+                                    window.open("./admin.html", "_self");
+                                } else if (response.role == "user") {
+                                    window.open("./home.html", "_self");
+                                } else {
+                                    alert("Invalid role.");
+                                }
                             }
                         },
                         error: function() {

@@ -2,7 +2,7 @@
 
 body {
     font-family: "Roboto", sans-serif;
-    background-color: #f3f4f6;
+    background-color: #f3f3f3;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,10 +17,10 @@ h2 {
 .container {
     width: 100%;
     max-width: 400px;
-    background-color: white;
+    background-color: #fff;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .form-group {
@@ -43,7 +43,7 @@ h2 {
     width: 100%;
     padding: 10px;
     background-color: #4c9faf;
-    color: white;
+    color: #fff;
     border: none;
     border-radius: 4px;
     cursor: pointer;
