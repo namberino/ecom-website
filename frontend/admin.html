@@ -8,27 +8,29 @@
 </head>
 <body>
     <div class="container">
-        <h2>Home page</h2>
+        <h2>Admin page</h2>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script>
         $(document).ready(function() {
             let session_string = sessionStorage.getItem("session_string");
-            console.log(session_string);
 
             if (session_string != null) {
-                console.log("Not null");
                 $.ajax({
                     url: "http://127.0.0.1:5000/validate_session",
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify({ session_string: session_string }),
                     success: function(response) {
-                        // alert(response.message);
                         if (response.status == "fail") {
                             alert("Session string validation failed");
                             sessionStorage.setItem("session_string", "");
+                            window.open("./index.html", "_self");
+                        }
+
+                        if (response.role != "admin") {
+                            alert("Invalid role. Please log into an admin account to access the admin page.");
                             window.open("./index.html", "_self");
                         }
                     },
