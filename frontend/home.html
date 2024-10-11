@@ -4,19 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-commerce Website</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/home.css">
 </head>
 <body>
-    <div class="container">
-        <h2>Home page</h2>
+    <div class="header">
+        <a class="logo" href="#">Home page</a>
+        <div class="header-right">
+          <a id="cart-button">Cart</a>
+          <a id="account-button">Account</a>
+          <a id="logout-button">Logout</a>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script>
         $(document).ready(function() {
+            $("#logout-button").click(function() {
+                if (confirm("Are you sure you want to logout?")) {
+                    sessionStorage.setItem("session_string", "");
+                    window.open("./index.html", "_self");
+                }
+            });
+
             let session_string = sessionStorage.getItem("session_string");
 
-            if (session_string != null) {
+            if (session_string != null && session_string != "") {
                 $.ajax({
                     url: "http://127.0.0.1:5000/validate_session",
                     type: "POST",
@@ -32,6 +44,8 @@
                     },
                     error: function() {
                         alert("Error during session string validation.");
+                        sessionStorage.setItem("session_string", "");
+                        window.open("./index.html", "_self");
                     }
                 });
             } else {
