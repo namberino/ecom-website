@@ -36,6 +36,8 @@
                     },
                     error: function() {
                         alert("Error during session string validation.");
+                        sessionStorage.setItem("session_string", "");
+                        window.open("./index.html", "_self");
                     }
                 });
             } else {
