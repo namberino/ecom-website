@@ -83,6 +83,7 @@ def register():
     return jsonify({"status": "success", "message": "Registration successful!"})
 
 
+# endpoint for session string validation
 @app.route("/validate_session", methods=["POST"])
 def validate_session():
     encrypted_session_str = request.json["session_string"]
@@ -90,7 +91,7 @@ def validate_session():
 
     cursor = db.cursor()
 
-    # check if session is valid
+    # check if session information is valid
     cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
     valid_user = cursor.fetchone()
     if valid_user:
