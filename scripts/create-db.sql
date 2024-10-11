@@ -9,3 +9,12 @@ create table Users (
     role varchar(10) not null,
     primary key (id)
 );
+
+create table Products (
+    id int auto_increment not null,
+    name varchar(100) not null,
+    price float not null,
+    amount int not null,
+    description varchar(300) not null,
+    primary key (id)
+);
