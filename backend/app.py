@@ -23,6 +23,9 @@ db = MySQLdb.connect(
 )
 
 
+import products
+
+
 def encrypt_session_string(data):
     encrypted_data = rsa.encrypt(data.encode(), public_key)
     return base64.b64encode(encrypted_data).decode() # decode since b64encode returns byte string

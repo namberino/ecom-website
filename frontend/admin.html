@@ -16,6 +16,23 @@
         </div>
     </div>
 
+    <div class="product-container">
+        <h2>Product List</h2>
+        <table id="product-table" border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Amount</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="product-body"></tbody>
+        </table>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script>
         $(document).ready(function() {
@@ -47,6 +64,8 @@
                             alert("Invalid role. Please log into an admin account to access the admin page.");
                             window.open("./index.html", "_self");
                         }
+
+                        load_products();
                     },
                     error: function() {
                         alert("Error during session string validation.");
@@ -57,6 +76,83 @@
             } else {
                 alert("Must be logged in to access page.");
                 window.open("./index.html", "_self");
+            }
+
+
+            function load_products() {
+                $.ajax({
+                    url: "http://127.0.0.1:5000/get_products",
+                    type: "GET",
+                    success: function(response) {
+                        if (response.status === "success") {
+                            const products = response.products;
+                            const product_body = $("#product-body");
+                            product_body.empty(); // clear existing rows
+
+                            // loop through products and create table rows
+                            products.forEach(function(product) {
+                                const row = `
+                                    <tr id="product-${product.id}">
+                                        <td>${product.id}</td>
+                                        <td>${product.name}</td>
+                                        <td>${product.price}</td>
+                                        <td>${product.amount}</td>
+                                        <td>${product.description}</td>
+                                        <td>
+                                            <button class="edit-button" data-id="${product.id}">Edit</button>
+                                            <button class="delete-button" data-id="${product.id}">Delete</button>
+                                        </td>
+                                    </tr>
+                                `;
+                                product_body.append(row);
+                            });
+
+                            // delete button handling
+                            $(".delete-button").click(function() {
+                                const product_id = $(this).data("id");
+                                delete_product(product_id);
+                            });
+
+                            // edit button handling
+                            $(".edit-button").click(function() {
+                                const product_id = $(this).data("id");
+                                edit_product(product_id);
+                            });
+                        } else {
+                            alert("Failed to fetch products.");
+                        }
+                    },
+                    error: function() {
+                        alert("Error fetching products.");
+                    }
+                });
+            }
+
+            // Function to handle product deletion
+            function delete_product(product_id) {
+                if (confirm("Are you sure you want to delete this product?")) {
+                    $.ajax({
+                        url: `http://127.0.0.1:5000/delete_product?id=${product_id}`,
+                        type: "DELETE",
+                        success: function(response) {
+                            if (response.status === "success") {
+                                alert("Product deleted successfully.");
+                                $(`#product-${product_id}`).remove(); // Remove the row from the table
+                            } else {
+                                alert("Failed to delete product.");
+                            }
+                        },
+                        error: function() {
+                            alert("Error deleting product.");
+                        }
+                    });
+                }
+            }
+
+            // Function to handle product editing (can be further expanded)
+            function edit_product(product_id) {
+                // Logic to edit the product (e.g., open an edit form or modal)
+                alert("Edit product functionality coming soon for product ID: " + product_id);
             }
         });
     </script>
