@@ -41,4 +41,19 @@ def edit_product():
 
 @app.route("/delete_product", methods=["DELETE"])
 def delete_product():
-    return None
+    product_id = request.args.get("id")
+
+    cursor = db.cursor()
+
+    # check if product exists
+    cursor.execute("select * from Products where id = %s", (product_id,))
+    product = cursor.fetchone()
+
+    if product:
+        cursor.execute("delete from Products where id = %s", (product_id,))
+        db.commit()
+
+        return jsonify({"status": "success", "message": "Product deleted successfully!"})
+    else:
+        return jsonify({"status": "fail", "message": "Product not found!"})
+
