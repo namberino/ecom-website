@@ -53,6 +53,44 @@ h2 {
     border-radius: 4px;
 }
 
+.welcome-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    text-align: center;
+}
+
+.welcome-text {
+    font-size: 38px;
+    font-weight: bold;
+}
+
+.subtext {
+    font-size: 20px;
+    color: #777;
+}
+
+.product-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.btn {
+    padding: 5px 10px;
+    margin: 10px 0;
+    border: 1px solid #555;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn:hover {
+    background-color: #ddd; /* Darker green on hover */
+}
+
 .table-container {
     display: flex;
     justify-content: center;
@@ -86,4 +124,27 @@ button .edit-btn, button .delete-btn {
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
+}
+
+#edit-product-modal,
+#create-product-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid black;
+}
+
+#edit-product-modal form,
+#create-product-modal form {
+    display: flex;
+    flex-direction: column;
+}
+
+#edit-product-modal input, #edit-product-modal textarea,
+#create-product-modal input, #create-product-modal textarea {
+    margin-bottom: 10px;
+    padding: 5px;
 }
