@@ -250,8 +250,6 @@
                 const amount = $("#create-product-amount").val();
                 const description = $("#create-product-description").val();
 
-                console.log("sending request");
-
                 $.ajax({
                     url: "http://127.0.0.1:5000/create_product",
                     type: "POST",
