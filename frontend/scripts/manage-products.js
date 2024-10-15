@@ -100,15 +100,13 @@ $(document).ready(function() {
                 url: `http://127.0.0.1:5000/delete_product?id=${product_id}`,
                 type: "DELETE",
                 success: function(response) {
+                    alert(response.message);
                     if (response.status === "success") {
-                        alert("Product deleted successfully.");
-                        $(`#product-${product_id}`).remove(); // remove the row from the table
-                    } else {
-                        alert("Failed to delete product.");
+                        $(`#product-${product_id}`).remove(); // remove row from table
                     }
                 },
                 error: function() {
-                    alert("Error deleting product.");
+                    alert("Error during product deletion request.");
                 }
             });
         }
@@ -117,21 +115,39 @@ $(document).ready(function() {
 
     // product editing handling
     function edit_product(product_id) {
-        const row = $(`#product-${product_id}`);
-        const current_name = row.find("td:nth-child(2)").text();
-        const current_price = row.find("td:nth-child(3)").text();
-        const current_amount = row.find("td:nth-child(4)").text();
-        const current_description = row.find("td:nth-child(5)").text();
+        let current_name;
+        let current_price;
+        let current_amount;
+        let current_description;
 
-        // populate edit modal with product details
-        $("#edit-product-id").val(product_id);
-        $("#edit-product-name").val(current_name);
-        $("#edit-product-price").val(current_price);
-        $("#edit-product-amount").val(current_amount);
-        $("#edit-product-description").val(current_description);
+        $.ajax({
+            url: `http://127.0.0.1:5000/get_product?id=${product_id}`,
+            type: "GET",
+            success: function(response) {
+                if (response.status == "success") {
+                    const product = response.product;
+                    current_name = product.name;
+                    current_price = product.price;
+                    current_amount = product.amount;
+                    current_description = product.description;
 
-        // show edit product modal
-        $("#edit-product-modal").show();
+                    // populate edit modal with product details
+                    $("#edit-product-id").val(product_id);
+                    $("#edit-product-name").val(current_name);
+                    $("#edit-product-price").val(current_price);
+                    $("#edit-product-amount").val(current_amount);
+                    $("#edit-product-description").val(current_description);
+
+                    // show edit product modal
+                    $("#edit-product-modal").show();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function() {
+                alert("Failed to fetch product.");
+            }
+        });
     }
 
     // edit product form handling
@@ -164,7 +180,7 @@ $(document).ready(function() {
         });
     });
 
-    // cancle edit button handling
+    // cancel edit button handling
     $("#cancel-edit").click(function() {
         $("#edit-product-modal").hide();
     });

@@ -72,7 +72,7 @@ h2 {
     color: #777;
 }
 
-.product-container {
+.product-container, .account-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -127,7 +127,9 @@ button .edit-btn, button .delete-btn {
 }
 
 #edit-product-modal,
-#create-product-modal {
+#create-product-modal,
+#edit-account-modal,
+#create-account-modal {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -138,13 +140,25 @@ button .edit-btn, button .delete-btn {
 }
 
 #edit-product-modal form,
-#create-product-modal form {
+#create-product-modal form,
+#edit-account-modal form,
+#create-account-modal form {
     display: flex;
     flex-direction: column;
 }
 
 #edit-product-modal input, #edit-product-modal textarea,
-#create-product-modal input, #create-product-modal textarea {
+#create-product-modal input, #create-product-modal textarea,
+#edit-account-modal input, #edit-account-modal textarea,
+#create-account-modal input, #create-account-modal textarea {
     margin-bottom: 10px;
     padding: 5px;
+}
+
+footer {
+    border-top: 1px solid #555;
+    margin-top: 20px;
+    padding: 20px;
+    text-align: center;
+    font-weight: bold;
 }

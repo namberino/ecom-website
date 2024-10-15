@@ -26,7 +26,23 @@ def get_products():
 
 @app.route("/get_product", methods=["GET"])
 def get_product():
-    return None
+    product_id = request.args.get("id")
+
+    cursor = db.cursor()
+
+    cursor.execute("select * from Products where id = %s", (product_id,))
+    product = cursor.fetchone()
+
+    if product:
+        product_dict = {
+            "name": product[1],
+            "price": product[2],
+            "amount": product[3],
+            "description": product[4]
+        }
+        return jsonify({"status": "success", "message": "Product found!", "product": product_dict})
+    else:
+        return jsonify({"status": "fail", "message": "Product not found!"})
 
 
 @app.route("/create_product", methods=["POST"])
@@ -75,9 +91,16 @@ def edit_product():
         return jsonify({"status": "fail", "message": "Invalid data type for price and amount"})
 
     cursor = db.cursor()
-    cursor.execute("update Products set name = %s, price = %s, amount = %s, description = %s where id = %s", (name, price, amount, description, prod_id))
-    db.commit()
-    return jsonify({"status": "success", "message": "Product updated successfully!"})
+
+    cursor.execute("select * from Products where name = %s", (name,))
+    existing_product = cursor.fetchone()
+
+    if existing_product:
+        return jsonify({"status": "fail", "message": "Product already exists."})
+    else:
+        cursor.execute("update Products set name = %s, price = %s, amount = %s, description = %s where id = %s", (name, price, amount, description, prod_id))
+        db.commit()
+        return jsonify({"status": "success", "message": "Product updated successfully!"})
 
 
 @app.route("/delete_product", methods=["DELETE"])
