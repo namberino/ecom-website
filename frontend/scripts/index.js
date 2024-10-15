@@ -25,7 +25,6 @@ $(document).ready(function() {
                 contentType: "application/json",
                 data: JSON.stringify({ email: email, password: password }),
                 success: function(response) {
-                    alert(response.message);
                     if (response.session_string) {
                         sessionStorage.setItem("session_string", response.session_string);
                         
