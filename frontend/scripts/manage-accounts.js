@@ -126,4 +126,43 @@ $(document).ready(function() {
     function edit_account(account_id) {
         alert("Nothing for now.");
     }
+
+
+    // create account form handling
+    $("#create-account-form").submit(function(event) {
+        event.preventDefault(); // prevent send request and reload page
+
+        const name = $("#create-account-name").val();
+        const email = $("#create-account-email").val();
+        const password = $("#create-account-password").val();
+
+        $.ajax({
+            url: "http://127.0.0.1:5000/create_account",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ name: name, email: email, password: password }),
+            success: function(response) {
+                if (response.status === "success") {
+                    alert(response.message);
+                    load_accounts(); // reload the account list
+                    $("#create-account-modal").hide();
+                } else {
+                    alert("Failed to create account.");
+                }
+            },
+            error: function() {
+                alert("Error creating account: " + response.message);
+            }
+        });
+    });
+
+    // create account button handling
+    $("#create-account-button").click(function() {
+        $("#create-account-modal").show();
+    });
+
+    // cancel create account button handling
+    $("#cancel-create").click(function() {
+        $("#create-account-modal").hide();
+    });
 });
