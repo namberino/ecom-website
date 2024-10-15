@@ -36,7 +36,8 @@ def get_account():
     if account:
         account_dict = {
             "name": account[1],
-            "email": account[2]
+            "email": account[2],
+            "role": account[4]
         }
         return jsonify({"status": "success", "message": "Account found!", "account": account_dict})
     else:

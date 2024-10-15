@@ -143,6 +143,19 @@ $(document).ready(function() {
                     $("#edit-account-email").val(current_email);
                     $("#edit-account-password").val("");
 
+                    if (account.role == "admin") {
+                        $("#edit-account-name").hide();
+                        $("#edit-account-email").hide();
+                        $("label[for='edit-account-name']").hide();
+                        $("label[for='edit-account-email']").hide();
+                        $("#edit-account-header").html("Edit Password");
+                    } else {
+                        $("#edit-account-name").show();
+                        $("#edit-account-email").show();
+                        $("label[for='edit-account-name']").show();
+                        $("label[for='edit-account-email']").show();
+                    }
+
                     // show edit account modal
                     $("#edit-account-modal").show();
                 } else {
