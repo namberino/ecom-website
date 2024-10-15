@@ -24,6 +24,28 @@ def get_products():
     return jsonify({"status": "success", "products": product_list})
 
 
+@app.route("/get_product", methods=["GET"])
+def get_product():
+    product_id = request.args.get("id")
+
+    cursor = db.cursor()
+
+    cursor.execute("select * from Products where id = %s", (product_id,))
+    product = cursor.fetchone()
+
+    if product:
+        product_dict = {
+            "id": product[0],
+            "name": product[1],
+            "price": product[2],
+            "amount": product[3],
+            "description": product[4]
+        }
+        return jsonify({"status": "success", "message": "Product found!", "product": product_dict})
+    else:
+        return jsonify({"status": "fail", "message": "Product not found!"})
+
+
 @app.route("/create_product", methods=["POST"])
 def create_product():
     name = request.json["name"]
