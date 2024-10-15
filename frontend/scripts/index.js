@@ -35,6 +35,8 @@ $(document).ready(function() {
                         } else {
                             alert("Invalid role.");
                         }
+                    } else {
+                        alert(response.message);
                     }
                 },
                 error: function() {

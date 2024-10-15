@@ -180,7 +180,7 @@ $(document).ready(function() {
         });
     });
 
-    // cancle edit button handling
+    // cancel edit button handling
     $("#cancel-edit").click(function() {
         $("#edit-product-modal").hide();
     });

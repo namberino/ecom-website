@@ -123,9 +123,71 @@ $(document).ready(function() {
     }
 
 
+    // edit account handling
     function edit_account(account_id) {
-        alert("Nothing for now.");
+        let current_name;
+        let current_email;
+
+        $.ajax({
+            url: `http://127.0.0.1:5000/get_account?id=${account_id}`,
+            type: "GET",
+            success: function(response) {
+                if (response.status == "success") {
+                    const account = response.account;
+                    current_name = account.name;
+                    current_email = account.email;
+
+                    // populate edit modal with account details
+                    $("#edit-account-id").val(account_id);
+                    $("#edit-account-name").val(current_name);
+                    $("#edit-account-email").val(current_email);
+                    $("#edit-account-password").val("");
+
+                    // show edit account modal
+                    $("#edit-account-modal").show();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function() {
+                alert("Failed to fetch account.");
+            }
+        });
     }
+
+    // edit account form handling
+    $("#edit-account-form").submit(function(event) {
+        event.preventDefault(); // prevent send request and reload page
+
+        const account_id = $("#edit-account-id").val();
+        const name = $("#edit-account-name").val();
+        const email = $("#edit-account-email").val();
+        const password = $("#edit-account-password").val();
+
+        $.ajax({
+            url: "http://127.0.0.1:5000/edit_account",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ id: account_id, name: name, email: email, password: password }),
+            success: function(response) {
+                if (response.status === "success") {
+                    alert(response.message);
+                    load_accounts(); // reload account list
+                    $("#edit-account-modal").hide();
+                } else {
+                    alert("Failed to update account: " + response.message);
+                }
+            },
+            error: function() {
+                alert("Error updating account.");
+            }
+        });
+    });
+
+    // cancel edit button handling
+    $("#cancel-edit").click(function() {
+        $("#edit-account-modal").hide();
+    });
 
 
     // create account form handling

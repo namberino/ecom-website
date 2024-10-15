@@ -35,7 +35,6 @@ def get_product():
 
     if product:
         product_dict = {
-            "id": product[0],
             "name": product[1],
             "price": product[2],
             "amount": product[3],
@@ -92,9 +91,16 @@ def edit_product():
         return jsonify({"status": "fail", "message": "Invalid data type for price and amount"})
 
     cursor = db.cursor()
-    cursor.execute("update Products set name = %s, price = %s, amount = %s, description = %s where id = %s", (name, price, amount, description, prod_id))
-    db.commit()
-    return jsonify({"status": "success", "message": "Product updated successfully!"})
+
+    cursor.execute("select * from Products where name = %s", (name,))
+    existing_product = cursor.fetchone()
+
+    if existing_product:
+        return jsonify({"status": "fail", "message": "Product already exists."})
+    else:
+        cursor.execute("update Products set name = %s, price = %s, amount = %s, description = %s where id = %s", (name, price, amount, description, prod_id))
+        db.commit()
+        return jsonify({"status": "success", "message": "Product updated successfully!"})
 
 
 @app.route("/delete_product", methods=["DELETE"])

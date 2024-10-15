@@ -35,10 +35,8 @@ def get_account():
 
     if account:
         account_dict = {
-            "id": account[0],
             "name": account[1],
-            "email": account[2],
-            "role": account[4]
+            "email": account[2]
         }
         return jsonify({"status": "success", "message": "Account found!", "account": account_dict})
     else:
@@ -70,7 +68,31 @@ def create_account():
 
 @app.route("/edit_account", methods=["POST"])
 def edit_account():
-    return None
+    account_id = request.json["id"]
+    name = request.json["name"]
+    email = request.json["email"]
+    password = request.json["password"]
+
+    if not name or not email:
+        return jsonify({"status": "fail", "message": "Name and email must not be empty!"})
+
+    cursor = db.cursor()
+
+    cursor.execute("select * from Users where email = %s", (email,))
+    existing_account = cursor.fetchone()
+
+    if existing_account:
+        return jsonify({"status": "fail", "message": "Email is already associated with another account."})
+    else:
+        if password == "":
+            cursor.execute("update Users set name = %s, email = %s where id = %s", (name, email, account_id))
+            db.commit()
+        else:
+            hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+            cursor.execute("update Users set name = %s, email = %s, password = %s where id = %s", (name, email, hashed_password.decode(), account_id))
+            db.commit()
+
+        return jsonify({"status": "success", "message": "Account updated successfully!"})
 
 
 @app.route("/delete_account", methods=["DELETE"])
