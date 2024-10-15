@@ -100,15 +100,13 @@ $(document).ready(function() {
                 url: `http://127.0.0.1:5000/delete_product?id=${product_id}`,
                 type: "DELETE",
                 success: function(response) {
+                    alert(response.message);
                     if (response.status === "success") {
-                        alert("Product deleted successfully.");
-                        $(`#product-${product_id}`).remove(); // remove the row from the table
-                    } else {
-                        alert("Failed to delete product.");
+                        $(`#product-${product_id}`).remove(); // remove row from table
                     }
                 },
                 error: function() {
-                    alert("Error deleting product.");
+                    alert("Error during product deletion request.");
                 }
             });
         }

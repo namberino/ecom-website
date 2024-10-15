@@ -23,7 +23,9 @@ db = MySQLdb.connect(
 )
 
 
+# import endpoints from other files
 import products
+import accounts
 
 
 def encrypt_session_string(data):

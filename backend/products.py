@@ -24,11 +24,6 @@ def get_products():
     return jsonify({"status": "success", "products": product_list})
 
 
-@app.route("/get_product", methods=["GET"])
-def get_product():
-    return None
-
-
 @app.route("/create_product", methods=["POST"])
 def create_product():
     name = request.json["name"]
