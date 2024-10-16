@@ -23,12 +23,6 @@ db = MySQLdb.connect(
 )
 
 
-# import endpoints from other files
-import products
-import accounts
-import user
-
-
 def encrypt_session_string(data):
     encrypted_data = rsa.encrypt(data.encode(), public_key)
     return base64.b64encode(encrypted_data).decode() # decode since b64encode returns byte string
@@ -37,6 +31,12 @@ def encrypt_session_string(data):
 def decrypt_session_string(data):
     encrypted_data = base64.b64decode(data.encode())
     return rsa.decrypt(encrypted_data, private_key).decode()
+
+
+# import endpoints from other files
+import products
+import accounts
+import user
 
 
 # endpoint for login

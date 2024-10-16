@@ -23,6 +23,8 @@ $(document).ready(function() {
                     sessionStorage.setItem("session_string", "");
                     window.open("./index.html", "_self");
                 }
+
+                display_user_info();
             },
             error: function() {
                 alert("Error during session string validation.");
@@ -33,5 +35,26 @@ $(document).ready(function() {
     } else {
         alert("Must be logged in to access page.");
         window.open("./index.html", "_self");
+    }
+
+
+    // get and display user information
+    function display_user_info() {
+        $.ajax({
+            url: "http://127.0.0.1:5000/get_info_from_session",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ session_string: session_string }),
+            success: function(response) {
+                if (response.status == "success") {
+                    let account = response.account;
+                    $("#name-input").val(account.name);
+                    $("#email-input").val(account.email);
+                }
+            },
+            error: function() {
+                alert("Error during get info from session string request.")
+            }
+        });
     }
 });
