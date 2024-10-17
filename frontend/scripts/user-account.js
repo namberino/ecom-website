@@ -40,14 +40,16 @@ $(document).ready(function() {
 
     // get and display user information
     function display_user_info() {
+        let sess_str = sessionStorage.getItem("session_string");
         $.ajax({
             url: "http://127.0.0.1:5000/get_info_from_session",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ session_string: session_string }),
+            data: JSON.stringify({ session_string: sess_str }),
             success: function(response) {
                 if (response.status == "success") {
                     let account = response.account;
+                    $("#account-id-field").val(account.id);
                     $("#name-input").val(account.name);
                     $("#email-input").val(account.email);
                 }
@@ -57,4 +59,32 @@ $(document).ready(function() {
             }
         });
     }
+
+    $("#user-account-form").submit(function(event) {
+        event.preventDefault(); // prevent send request and reload page
+
+        const account_id = $("#account-id-field").val();
+        const name = $("#name-input").val();
+        const email = $("#email-input").val();
+        const password = $("#password-input").val();
+
+        $.ajax({
+            url: "http://127.0.0.1:5000/user_edit_info",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ id: account_id, name: name, email: email, password: password }),
+            success: function(response) {
+                if (response.status === "success") {
+                    alert("Account info update success: " + response.message);
+                    sessionStorage.setItem("session_string", response.session_string);
+                    display_user_info();
+                } else {
+                    alert("Failed to update account: " + response.message);
+                }
+            },
+            error: function() {
+                alert("Error updating account.");
+            }
+        });
+    });
 });
