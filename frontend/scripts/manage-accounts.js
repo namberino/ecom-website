@@ -57,7 +57,7 @@ $(document).ready(function() {
                     accounts.forEach(function(account) {
                         buttons = "";
 
-                        if (account.role !== 'admin') {
+                        if (account.role !== "admin") {
                             buttons = `
                                 <button class="edit-button" data-id="${account.id}">Edit</button>
                                 <button class="delete-button" data-id="${account.id}">Delete</button>
