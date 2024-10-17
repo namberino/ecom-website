@@ -79,7 +79,7 @@ def edit_account():
 
     cursor = db.cursor()
 
-    cursor.execute("select * from Users where email = %s", (email,))
+    cursor.execute("select * from Users where email = %s and not email = (select email from Users where id = %s)", (email, account_id))
     existing_account = cursor.fetchone()
 
     if existing_account:
