@@ -125,17 +125,14 @@ $(document).ready(function() {
 
     // edit account handling
     function edit_account(account_id) {
-        let current_name;
-        let current_email;
-
         $.ajax({
             url: `http://127.0.0.1:5000/get_account?id=${account_id}`,
             type: "GET",
             success: function(response) {
                 if (response.status == "success") {
                     const account = response.account;
-                    current_name = account.name;
-                    current_email = account.email;
+                    const current_name = account.name;
+                    const current_email = account.email;
 
                     // populate edit modal with account details
                     $("#edit-account-id").val(account_id);
