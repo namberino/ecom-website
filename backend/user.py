@@ -10,12 +10,8 @@ def get_info_from_session():
 
     cursor = db.cursor()
 
-    print(session_str)
-
     cursor.execute("select id, name from Users where email = %s", (session_str[0],))
     account = cursor.fetchone()
-
-    print(account)
 
     account_dict = {
         "id": account[0],
