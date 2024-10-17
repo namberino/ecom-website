@@ -92,7 +92,7 @@ def edit_product():
 
     cursor = db.cursor()
 
-    cursor.execute("select * from Products where name = %s", (name,))
+    cursor.execute("select * from Products where name = %s and not name = (select name from Products where id = %s)", (name, prod_id))
     existing_product = cursor.fetchone()
 
     if existing_product:
@@ -120,4 +120,3 @@ def delete_product():
         return jsonify({"status": "success", "message": "Product deleted successfully!"})
     else:
         return jsonify({"status": "fail", "message": "Product not found!"})
-
