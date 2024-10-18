@@ -102,7 +102,7 @@ $(document).ready(function() {
                 success: function(response) {
                     alert(response.message);
                     if (response.status === "success") {
-                        $(`#product-${product_id}`).remove(); // remove row from table
+                        load_products();
                     }
                 },
                 error: function() {
@@ -115,21 +115,16 @@ $(document).ready(function() {
 
     // product editing handling
     function edit_product(product_id) {
-        let current_name;
-        let current_price;
-        let current_amount;
-        let current_description;
-
         $.ajax({
             url: `http://127.0.0.1:5000/get_product?id=${product_id}`,
             type: "GET",
             success: function(response) {
                 if (response.status == "success") {
                     const product = response.product;
-                    current_name = product.name;
-                    current_price = product.price;
-                    current_amount = product.amount;
-                    current_description = product.description;
+                    const current_name = product.name;
+                    const current_price = product.price;
+                    const current_amount = product.amount;
+                    const current_description = product.description;
 
                     // populate edit modal with product details
                     $("#edit-product-id").val(product_id);
@@ -152,7 +147,7 @@ $(document).ready(function() {
 
     // edit product form handling
     $("#edit-product-form").submit(function(event) {
-        event.preventDefault(); // prevent send request and reload page
+        event.preventDefault(); // prevent reload page
 
         const product_id = $("#edit-product-id").val();
         const name = $("#edit-product-name").val();
@@ -188,7 +183,7 @@ $(document).ready(function() {
 
     // create product form handling
     $("#create-product-form").submit(function(event) {
-        event.preventDefault(); // prevent send request and reload page
+        event.preventDefault(); // prevent reload page
 
         const name = $("#create-product-name").val();
         const price = $("#create-product-price").val();

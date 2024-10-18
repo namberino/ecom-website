@@ -57,14 +57,14 @@ def create_account():
 
     cursor.execute("select * from Users where email = %s", (email,))
     existing_account = cursor.fetchone()
+    
     if existing_account:
         return jsonify({"status": "fail", "message": "Account already exists!"})
-
-    hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-
-    cursor.execute("insert into Users (name, email, password, role) values (%s, %s, %s, %s)", (name, email, hashed_password.decode(), "user"))
-    db.commit()
-    return jsonify({"status": "success", "message": "Account created successfully!"})
+    else:
+        hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+        cursor.execute("insert into Users (name, email, password, role) values (%s, %s, %s, %s)", (name, email, hashed_password.decode(), "user"))
+        db.commit()
+        return jsonify({"status": "success", "message": "Account created successfully!"})
 
 
 @app.route("/edit_account", methods=["POST"])
@@ -102,12 +102,11 @@ def delete_account():
 
     cursor = db.cursor()
 
-    cursor.execute("select * from Users where id = %s", (account_id,))
-    account = cursor.fetchone()
+    cursor.execute("delete from Users where id = %s", (account_id,))
+    db.commit()
 
-    if account:
-        cursor.execute("delete from Users where id = %s", (account_id,))
-        db.commit()
+    # check if any row is deleted
+    if cursor.rowcount > 0:
         return jsonify({"status": "success", "message": "Account deleted successfully!"})
     else:
         return jsonify({"status": "fail", "message": "Account not found!"})

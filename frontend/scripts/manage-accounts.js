@@ -57,7 +57,7 @@ $(document).ready(function() {
                     accounts.forEach(function(account) {
                         buttons = "";
 
-                        if (account.role !== 'admin') {
+                        if (account.role !== "admin") {
                             buttons = `
                                 <button class="edit-button" data-id="${account.id}">Edit</button>
                                 <button class="delete-button" data-id="${account.id}">Delete</button>
@@ -112,7 +112,7 @@ $(document).ready(function() {
                 success: function(response) {
                     alert(response.message);
                     if (response.status == "success") {
-                        $(`#account-${account_id}`).remove(); // remove row from table 
+                        load_accounts();
                     }
                 },
                 error: function() {
@@ -167,7 +167,7 @@ $(document).ready(function() {
 
     // edit account form handling
     $("#edit-account-form").submit(function(event) {
-        event.preventDefault(); // prevent send request and reload page
+        event.preventDefault(); // prevent reload page
 
         const account_id = $("#edit-account-id").val();
         const name = $("#edit-account-name").val();
@@ -202,7 +202,7 @@ $(document).ready(function() {
 
     // create account form handling
     $("#create-account-form").submit(function(event) {
-        event.preventDefault(); // prevent send request and reload page
+        event.preventDefault(); // prevent reload page
 
         const name = $("#create-account-name").val();
         const email = $("#create-account-email").val();
