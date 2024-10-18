@@ -112,7 +112,7 @@ $(document).ready(function() {
                 success: function(response) {
                     alert(response.message);
                     if (response.status == "success") {
-                        $(`#account-${account_id}`).remove(); // remove row from table 
+                        load_accounts();
                     }
                 },
                 error: function() {
