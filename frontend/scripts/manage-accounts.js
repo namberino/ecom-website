@@ -167,7 +167,7 @@ $(document).ready(function() {
 
     // edit account form handling
     $("#edit-account-form").submit(function(event) {
-        event.preventDefault(); // prevent send request and reload page
+        event.preventDefault(); // prevent reload page
 
         const account_id = $("#edit-account-id").val();
         const name = $("#edit-account-name").val();
@@ -202,7 +202,7 @@ $(document).ready(function() {
 
     // create account form handling
     $("#create-account-form").submit(function(event) {
-        event.preventDefault(); // prevent send request and reload page
+        event.preventDefault(); // prevent reload page
 
         const name = $("#create-account-name").val();
         const email = $("#create-account-email").val();
