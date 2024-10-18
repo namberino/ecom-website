@@ -57,3 +57,10 @@ def user_edit_info():
         encrypted_session_str = encrypt_session_string(session_str)
 
         return jsonify({"status": "success", "message": "Account updated successfully!", "session_string": encrypted_session_str})
+
+
+@app.route("/add_to_cart", methods["POST"])
+def add_to_cart():
+    product_id = request.json["id"]
+
+    return None

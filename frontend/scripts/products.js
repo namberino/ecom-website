@@ -68,7 +68,6 @@ $(document).ready(function() {
 
                     // add to cart button handling
                     $(".add-to-cart-button").click(function() {
-                        alert("Added product to cart.");
                         const product_id = $(this).data("id");
                         add_product_to_cart(product_id);
                     });
@@ -78,6 +77,27 @@ $(document).ready(function() {
             },
             error: function() {
                 alert("Error fetching products.");
+            }
+        });
+    }
+
+
+    function add_product_to_cart(product_id) {
+        $.ajax({
+            url: "http://127.0.0.1:5000/add_to_cart",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ product_id: product_id, user_id: user_id }),
+            success: function(response) {
+                if (response.status == "success") {
+                    alert("Added product to cart.");
+
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function() {
+                alert("Error during add to cart.")
             }
         });
     }
