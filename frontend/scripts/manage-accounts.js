@@ -83,13 +83,13 @@ $(document).ready(function() {
 
                     // delete button handling
                     $(".delete-button").click(function() {
-                        const account_id = $(this).data("id");
+                        const account_id = $(this).data("id"); // access data-id
                         delete_account(account_id);
                     });
 
                     // edit button handling
                     $(".edit-button").click(function() {
-                        const account_id = $(this).data("id");
+                        const account_id = $(this).data("id"); // access data-id
                         edit_account(account_id);
                     });
                 } else {
@@ -167,7 +167,7 @@ $(document).ready(function() {
 
     // edit account form handling
     $("#edit-account-form").submit(function(event) {
-        event.preventDefault(); // prevent send request and reload page
+        event.preventDefault(); // prevent reload page
 
         const account_id = $("#edit-account-id").val();
         const name = $("#edit-account-name").val();
@@ -202,7 +202,7 @@ $(document).ready(function() {
 
     // create account form handling
     $("#create-account-form").submit(function(event) {
-        event.preventDefault(); // prevent send request and reload page
+        event.preventDefault(); // prevent reload page
 
         const name = $("#create-account-name").val();
         const email = $("#create-account-email").val();

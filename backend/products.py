@@ -65,12 +65,13 @@ def create_product():
 
     cursor.execute("select * from Products where name = %s", (name,))
     product = cursor.fetchone()
+
     if product:
         return jsonify({"status": "fail", "message": "Product already exists!"})
-
-    cursor.execute("insert into Products (name, price, amount, description) values (%s, %s, %s, %s)", (name, price, amount, description))
-    db.commit()
-    return jsonify({"status": "success", "message": "Product created successfully!"})
+    else:
+        cursor.execute("insert into Products (name, price, amount, description) values (%s, %s, %s, %s)", (name, price, amount, description))
+        db.commit()
+        return jsonify({"status": "success", "message": "Product created successfully!"})
 
 
 @app.route("/edit_product", methods=["POST"])
@@ -92,7 +93,7 @@ def edit_product():
 
     cursor = db.cursor()
 
-    cursor.execute("select * from Products where name = %s", (name,))
+    cursor.execute("select * from Products where name = %s and not name = (select name from Products where id = %s)", (name, prod_id))
     existing_product = cursor.fetchone()
 
     if existing_product:
@@ -109,15 +110,11 @@ def delete_product():
 
     cursor = db.cursor()
 
-    # check if product exists
-    cursor.execute("select * from Products where id = %s", (product_id,))
-    product = cursor.fetchone()
+    cursor.execute("delete from Products where id = %s", (product_id,))
+    db.commit()
 
-    if product:
-        cursor.execute("delete from Products where id = %s", (product_id,))
-        db.commit()
-
+    # check if any row is deleted
+    if cursor.rowcount > 0:
         return jsonify({"status": "success", "message": "Product deleted successfully!"})
     else:
         return jsonify({"status": "fail", "message": "Product not found!"})
-
