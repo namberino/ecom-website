@@ -59,8 +59,25 @@ def user_edit_info():
         return jsonify({"status": "success", "message": "Account updated successfully!", "session_string": encrypted_session_str})
 
 
-@app.route("/add_to_cart", methods["POST"])
+@app.route("/add_to_cart", methods=["POST"])
 def add_to_cart():
-    product_id = request.json["id"]
+    product_id = request.json["product_id"]
+    account_id = request.json["user_id"]
+    amount = request.json["amount"]
 
-    return None
+    cursor = db.cursor()
+
+    cursor.execute("select id, amount from Cart where user_id = %s and product_id = %s", (account_id, product_id))
+    cart_item = cursor.fetchone()
+    
+    if cart_item:
+        # update the amount of the existing product in the cart
+        new_amount = cart_item[1] + amount
+        cursor.execute("update Cart set amount = %s where id = %s", (new_amount, cart_item[0]))
+    else:
+        # insert a new product into the cart
+        cursor.execute("insert into Cart (user_id, product_id, amount) values (%s, %s, %s)", (account_id, product_id, amount))
+
+    db.commit()
+
+    return jsonify({"status": "success", "message": "Product added to cart successfully!"})

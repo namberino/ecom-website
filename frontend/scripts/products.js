@@ -59,6 +59,9 @@ $(document).ready(function() {
                                 <td>${product.amount}</td>
                                 <td>${product.description}</td>
                                 <td>
+                                    <input type="number" class="product-amount" id="amount-${product.id}" min="1" value="1">
+                                </td>
+                                <td>
                                     <button class="add-to-cart-button" data-id="${product.id}">Add to cart</button>
                                 </td>
                             </tr>
@@ -69,7 +72,8 @@ $(document).ready(function() {
                     // add to cart button handling
                     $(".add-to-cart-button").click(function() {
                         const product_id = $(this).data("id");
-                        add_product_to_cart(product_id);
+                        const amount = parseInt($(`#amount-${product_id}`).val());
+                        add_product_to_cart(product_id, amount);
                     });
                 } else {
                     alert("Failed to fetch products.");
@@ -82,16 +86,40 @@ $(document).ready(function() {
     }
 
 
-    function add_product_to_cart(product_id) {
+    function get_id_from_session_str(session_string) {
+        let user_id;
+        
+        $.ajax({
+            url: "http://127.0.0.1:5000/get_info_from_session",
+            type: "POST",
+            contentType: "application/json",
+            async: false,
+            data: JSON.stringify({ session_string: session_string }),
+            success: function(response) {
+                if (response.status == "success") {
+                    const account = response.account;
+                    user_id = account.id;
+                }
+            },
+            error: function() {
+                alert("Error during get info from session request.");
+            }
+        });
+
+        return user_id;
+    }
+
+    function add_product_to_cart(product_id, amount) {
+        const user_id = get_id_from_session_str(sessionStorage.getItem("session_string"));
+
         $.ajax({
             url: "http://127.0.0.1:5000/add_to_cart",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ product_id: product_id, user_id: user_id }),
+            data: JSON.stringify({ product_id: product_id, user_id: user_id, amount: amount }),
             success: function(response) {
                 if (response.status == "success") {
                     alert("Added product to cart.");
-
                 } else {
                     alert(response.message);
                 }
