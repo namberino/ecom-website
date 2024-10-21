@@ -24,7 +24,7 @@ $(document).ready(function() {
                     window.open("./index.html", "_self");
                 }
 
-                load_products();
+                load_cart();
             },
             error: function() {
                 alert("Error during session string validation.");
@@ -36,55 +36,6 @@ $(document).ready(function() {
         alert("Must be logged in to access page.");
         window.open("./index.html", "_self");
     }
-
-
-    // product loading handling
-    function load_products() {
-        $.ajax({
-            url: "http://127.0.0.1:5000/get_products",
-            type: "GET",
-            success: function(response) {
-                if (response.status === "success") {
-                    const products = response.products;
-                    const product_body = $("#product-body");
-                    product_body.empty(); // clear existing rows
-
-                    // loop through products and create table rows
-                    products.forEach(function(product) {
-                        const row = `
-                            <tr id="product-${product.id}">
-                                <td>${product.id}</td>
-                                <td>${product.name}</td>
-                                <td>${product.price}</td>
-                                <td>${product.amount}</td>
-                                <td>${product.description}</td>
-                                <td>
-                                    <input type="number" class="product-amount" id="amount-${product.id}" min="1" value="1">
-                                </td>
-                                <td>
-                                    <button class="add-to-cart-button" data-id="${product.id}">Add to cart</button>
-                                </td>
-                            </tr>
-                        `;
-                        product_body.append(row);
-                    });
-
-                    // add to cart button handling
-                    $(".add-to-cart-button").click(function() {
-                        const product_id = $(this).data("id");
-                        const amount = parseInt($(`#amount-${product_id}`).val());
-                        add_product_to_cart(product_id, amount);
-                    });
-                } else {
-                    alert("Failed to fetch products.");
-                }
-            },
-            error: function() {
-                alert("Error fetching products.");
-            }
-        });
-    }
-
 
     function get_id_from_session_str(session_string) {
         let user_id;
@@ -109,23 +60,92 @@ $(document).ready(function() {
         return user_id;
     }
 
-    function add_product_to_cart(product_id, amount) {
+
+    // product loading handling
+    function load_cart() {
         const user_id = get_id_from_session_str(sessionStorage.getItem("session_string"));
 
         $.ajax({
-            url: "http://127.0.0.1:5000/add_to_cart",
+            url: `http://127.0.0.1:5000/get_cart?id=${user_id}`,
+            type: "GET",
+            success: function(response) {
+                if (response.status === "success") {
+                    const products = response.cart;
+                    const cart_body = $("#cart-body");
+                    cart_body.empty(); // clear existing rows
+
+                    // loop through products and create table rows
+                    products.forEach(function(product) {
+                        const row = `
+                            <tr id="product-${product.product_id}">
+                                <td>${product.name}</td>
+                                <td>${product.price}</td>
+                                <td>
+                                    <input type="number" class="product-amount" id="amount-${product.product_id}" min="1" value="${product.amount}">
+                                </td>
+                                <td>
+                                    <button class="update-amount-button" data-id="${product.product_id}">Update amount</button>
+                                    <button class="del-from-cart-button" data-id="${product.product_id}">Remove</button>
+                                </td>
+                            </tr>
+                        `;
+                        cart_body.append(row);
+                    });
+
+                    // update amount button handling
+                    $(".update-amount-button").click(function() {
+                        const product_id = $(this).data("id");
+                        const amount = parseInt($(`#amount-${product_id}`).val());
+                        update_amount(user_id, product_id, amount);
+                    });
+
+                    // delete from cart button handling
+                    $(".del-from-cart-button").click(function() {
+                        const product_id = $(this).data("id");
+                        del_prod_from_cart(user_id, product_id);
+                    });
+                } else {
+                    alert("Failed to fetch products.");
+                }
+            },
+            error: function() {
+                alert("Error fetching products.");
+            }
+        });
+    }
+
+
+    function update_amount(user_id, product_id, amount) {
+        alert(user_id + ',' + product_id + ',' + amount);
+        $.ajax({
+            url: "http://127.0.0.1:5000/update_product_in_cart",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ product_id: product_id, user_id: user_id, amount: amount }),
+            data: JSON.stringify({user_id: user_id, product_id: product_id, amount: amount}),
+            success: function(response) {
+                alert(response.message);
+            },
+            error: function() {
+                alert("Error during update amount request.");
+            }
+        });
+    }
+
+
+    function del_prod_from_cart(user_id, product_id) {
+        $.ajax({
+            url: `http://127.0.0.1:5000/del_product_from_cart?user_id=${user_id}&product_id=${product_id}`,
+            type: "DELETE",
             success: function(response) {
                 if (response.status == "success") {
-                    alert("Added product to cart.");
+                    alert("Product was removed from cart.");
+                    load_cart();
                 } else {
                     alert(response.message);
                 }
             },
             error: function() {
-                alert("Error during add to cart.")
+                alert("Error during removal from cart request.");
             }
         });
     }

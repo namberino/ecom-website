@@ -57,3 +57,87 @@ def user_edit_info():
         encrypted_session_str = encrypt_session_string(session_str)
 
         return jsonify({"status": "success", "message": "Account updated successfully!", "session_string": encrypted_session_str})
+
+
+@app.route("/add_to_cart", methods=["POST"])
+def add_to_cart():
+    product_id = request.json["product_id"]
+    account_id = request.json["user_id"]
+    amount = request.json["amount"]
+
+    cursor = db.cursor()
+
+    cursor.execute("select id, amount from Cart where user_id = %s and product_id = %s", (account_id, product_id))
+    cart_item = cursor.fetchone()
+    
+    if cart_item:
+        # update the amount of the existing product in the cart
+        new_amount = cart_item[1] + amount
+        cursor.execute("update Cart set amount = %s where id = %s", (new_amount, cart_item[0]))
+    else:
+        # insert a new product into the cart
+        cursor.execute("insert into Cart (user_id, product_id, amount) values (%s, %s, %s)", (account_id, product_id, amount))
+
+    db.commit()
+
+    return jsonify({"status": "success", "message": "Product added to cart successfully!"})
+
+
+@app.route("/get_cart", methods=["GET"])
+def get_cart():
+    user_id = request.args.get("id")
+
+    cursor = db.cursor()
+
+    cursor.execute("select product_id, name, price, Cart.amount from Cart join Products on Cart.product_id = Products.id where user_id = %s", (user_id,))
+    products = cursor.fetchall()
+
+    cart = []
+
+    for product in products:
+        product_dict = {
+            "product_id": product[0],
+            "name": product[1],
+            "price": product[2],
+            "amount": product[3]
+        }
+        cart.append(product_dict)
+
+    if cart:
+        return jsonify({"status": "success", "message": "Acquired products in cart.", "cart": cart})
+    else:
+        return jsonify({"status": "fail", "message": "Could not find any products in cart."})
+
+
+@app.route("/del_product_from_cart", methods=["DELETE"])
+def del_product_from_cart():
+    user_id = request.args.get("user_id")
+    product_id = request.args.get("product_id")
+
+    cursor = db.cursor()
+
+    cursor.execute("delete from Cart where user_id = %s and product_id = %s", (user_id, product_id))
+    db.commit()
+
+    if cursor.rowcount > 0:
+        return jsonify({"status": "success", "message": "Product successfully removed from cart."})
+    else:
+        return jsonify({"status": "fail", "message": "Product was not found and removed."})
+
+
+@app.route("/update_product_in_cart", methods=["POST"])
+def update_product_in_cart():
+    user_id = request.json["user_id"]
+    product_id = request.json["product_id"]
+    amount = request.json["amount"]
+
+    try:
+        int(amount)
+    except:
+        return jsonify({"status": "success", "message": "Amount must be an integer."})
+
+    cursor = db.cursor()
+    cursor.execute("update Cart set amount = %s where user_id = %s and product_id = %s", (amount, user_id, product_id))
+    db.commit()
+
+    return jsonify({"status": "success", "message": "Product amount updated successfully."})

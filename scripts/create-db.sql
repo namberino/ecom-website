@@ -18,3 +18,13 @@ create table Products (
     description varchar(300) not null,
     primary key (id)
 );
+
+create table Cart (
+    id int auto_increment not null,
+    user_id int not null,
+    product_id int not null,
+    amount int not null,
+    primary key (id),
+    foreign key (user_id) references Users(id) on delete cascade,
+    foreign key (product_id) references Products(id) on delete cascade
+);
