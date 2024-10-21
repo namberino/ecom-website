@@ -72,7 +72,7 @@ h2 {
     color: #777;
 }
 
-.product-container, .account-container {
+.product-container, .account-container, .cart-container {
     display: flex;
     flex-direction: column;
     align-items: center;

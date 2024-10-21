@@ -23,6 +23,8 @@ $(document).ready(function() {
                     sessionStorage.setItem("session_string", "");
                     window.open("./index.html", "_self");
                 }
+
+                load_cart();
             },
             error: function() {
                 alert("Error during session string validation.");
@@ -33,5 +35,105 @@ $(document).ready(function() {
     } else {
         alert("Must be logged in to access page.");
         window.open("./index.html", "_self");
+    }
+
+    function get_id_from_session_str(session_string) {
+        let user_id;
+        
+        $.ajax({
+            url: "http://127.0.0.1:5000/get_info_from_session",
+            type: "POST",
+            contentType: "application/json",
+            async: false,
+            data: JSON.stringify({ session_string: session_string }),
+            success: function(response) {
+                if (response.status == "success") {
+                    const account = response.account;
+                    user_id = account.id;
+                }
+            },
+            error: function() {
+                alert("Error during get info from session request.");
+            }
+        });
+
+        return user_id;
+    }
+
+    // product loading handling
+    function load_cart() {
+        const user_id = get_id_from_session_str(sessionStorage.getItem("session_string"));
+
+        $.ajax({
+            url: `http://127.0.0.1:5000/get_cart?id=${user_id}`,
+            type: "GET",
+            success: function(response) {
+                if (response.status === "success") {
+                    const products = response.cart;
+                    const cart_body = $("#cart-body");
+                    cart_body.empty(); // clear existing rows
+
+                    // loop through products and create table rows
+                    products.forEach(function(product) {
+                        const row = `
+                            <tr id="product-${product.product_id}">
+                                <td>${product.name}</td>
+                                <td>${product.price}</td>
+                                <td>
+                                    <input type="number" class="product-amount" id="amount-${product.id}" min="1" value="${product.amount}">
+                                </td>
+                                <td>
+                                    <button class="update-amount-button" data-id="${product.id}">Update amount</button>
+                                    <button class="del-from-cart-button" data-id="${product.id}">Remove</button>
+                                </td>
+                            </tr>
+                        `;
+                        cart_body.append(row);
+                    });
+
+                    // update amount button handling
+                    $(".update-amount-button").click(function() {
+                        const product_id = $(this).data("id");
+                        const amount = parseInt($(`#amount-${product_id}`).val());
+                        update_amount(user_id, product_id, amount);
+                    });
+
+                    // delete from cart button handling
+                    $(".del-from-cart-button").click(function() {
+                        const product_id = $(this).data("id");
+                        del_prod_from_cart(user_id, product_id);
+                    });
+                } else {
+                    alert("Failed to fetch products.");
+                }
+            },
+            error: function() {
+                alert("Error fetching products.");
+            }
+        });
+    }
+
+
+    function update_amount(user_id, product_id, amount) {
+
+    }
+
+
+    function del_prod_from_cart(user_id, product_id) {
+        $.ajax({
+            url: `http://127.0.0.1:5000/del_product_from_cart?user_id=${user_id}&product_id=${product_id}`,
+            type: "DELETE",
+            success: function(response) {
+                if (response.status == "success") {
+                    alert("Product was removed from cart.");
+                    load_cart();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function() {
+                alert("Error during removal from cart request.");
+            }
+        });
     }
 });

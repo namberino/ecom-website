@@ -81,3 +81,45 @@ def add_to_cart():
     db.commit()
 
     return jsonify({"status": "success", "message": "Product added to cart successfully!"})
+
+
+@app.route("/get_cart", methods=["GET"])
+def get_cart():
+    user_id = request.args.get("id")
+
+    cursor = db.cursor()
+
+    cursor.execute("select user_id, product_id, name, price, Cart.amount from Cart join Products on Cart.product_id = Products.id where user_id = %s", (user_id,))
+    products = cursor.fetchall()
+
+    cart = []
+
+    for product in products:
+        product_dict = {
+            "product_id": product[0],
+            "name": product[1],
+            "price": product[2],
+            "amount": product[3]
+        }
+        cart.append(product_dict)
+
+    if cart:
+        return jsonify({"status": "success", "message": "Acquired products in cart.", "cart": cart})
+    else:
+        return jsonify({"status": "fail", "message": "Could not find any products in cart."})
+
+
+@app.route("/del_product_from_cart", methods=["DELETE"])
+def del_product_from_cart():
+    user_id = request.args.get("user_id")
+    product_id = request.args.get("product_id")
+
+    cursor = db.cursor()
+
+    cursor.execute("delete from Cart where user_id = %s and product_id = %s", (user_id, product_id))
+    db.commit()
+
+    if cursor.rowcount > 0:
+        return jsonify({"status": "success", "message": "Product successfully removed from cart."})
+    else:
+        return jsonify({"status": "fail", "message": "Product was not found and removed."})
