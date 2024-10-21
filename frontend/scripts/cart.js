@@ -23,8 +23,6 @@ $(document).ready(function() {
                     sessionStorage.setItem("session_string", "");
                     window.open("./index.html", "_self");
                 }
-
-                load_products();
             },
             error: function() {
                 alert("Error during session string validation.");
