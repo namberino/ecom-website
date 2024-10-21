@@ -89,7 +89,7 @@ def get_cart():
 
     cursor = db.cursor()
 
-    cursor.execute("select user_id, product_id, name, price, Cart.amount from Cart join Products on Cart.product_id = Products.id where user_id = %s", (user_id,))
+    cursor.execute("select product_id, name, price, Cart.amount from Cart join Products on Cart.product_id = Products.id where user_id = %s", (user_id,))
     products = cursor.fetchall()
 
     cart = []
@@ -123,3 +123,21 @@ def del_product_from_cart():
         return jsonify({"status": "success", "message": "Product successfully removed from cart."})
     else:
         return jsonify({"status": "fail", "message": "Product was not found and removed."})
+
+
+@app.route("/update_product_in_cart", methods=["POST"])
+def update_product_in_cart():
+    user_id = request.json["user_id"]
+    product_id = request.json["product_id"]
+    amount = request.json["amount"]
+
+    try:
+        int(amount)
+    except:
+        return jsonify({"status": "success", "message": "Amount must be an integer."})
+
+    cursor = db.cursor()
+    cursor.execute("update Cart set amount = %s where user_id = %s and product_id = %s", (amount, user_id, product_id))
+    db.commit()
+
+    return jsonify({"status": "success", "message": "Product amount updated successfully."})

@@ -60,6 +60,7 @@ $(document).ready(function() {
         return user_id;
     }
 
+
     // product loading handling
     function load_cart() {
         const user_id = get_id_from_session_str(sessionStorage.getItem("session_string"));
@@ -80,11 +81,11 @@ $(document).ready(function() {
                                 <td>${product.name}</td>
                                 <td>${product.price}</td>
                                 <td>
-                                    <input type="number" class="product-amount" id="amount-${product.id}" min="1" value="${product.amount}">
+                                    <input type="number" class="product-amount" id="amount-${product.product_id}" min="1" value="${product.amount}">
                                 </td>
                                 <td>
-                                    <button class="update-amount-button" data-id="${product.id}">Update amount</button>
-                                    <button class="del-from-cart-button" data-id="${product.id}">Remove</button>
+                                    <button class="update-amount-button" data-id="${product.product_id}">Update amount</button>
+                                    <button class="del-from-cart-button" data-id="${product.product_id}">Remove</button>
                                 </td>
                             </tr>
                         `;
@@ -115,7 +116,19 @@ $(document).ready(function() {
 
 
     function update_amount(user_id, product_id, amount) {
-
+        alert(user_id + ',' + product_id + ',' + amount);
+        $.ajax({
+            url: "http://127.0.0.1:5000/update_product_in_cart",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({user_id: user_id, product_id: product_id, amount: amount}),
+            success: function(response) {
+                alert(response.message);
+            },
+            error: function() {
+                alert("Error during update amount request.");
+            }
+        });
     }
 
 
