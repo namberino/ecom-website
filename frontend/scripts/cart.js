@@ -105,7 +105,8 @@ $(document).ready(function() {
                         del_prod_from_cart(user_id, product_id);
                     });
                 } else {
-                    alert("Failed to fetch products.");
+                    alert("Cart is empty. Add products to cart for purchasing.");
+                    window.open("./products.html", "_self");
                 }
             },
             error: function() {
@@ -116,7 +117,6 @@ $(document).ready(function() {
 
 
     function update_amount(user_id, product_id, amount) {
-        alert(user_id + ',' + product_id + ',' + amount);
         $.ajax({
             url: "http://127.0.0.1:5000/update_product_in_cart",
             type: "POST",
@@ -149,4 +149,26 @@ $(document).ready(function() {
             }
         });
     }
+
+
+    $("#purchase-button").click(function() {
+        const user_id = get_id_from_session_str(sessionStorage.getItem("session_string"));
+
+        $.ajax({
+            url: "http://127.0.0.1:5000/purchase_product",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({user_id: user_id}),
+            success: function(response) {
+                alert(response.message);
+                if (response.status == "success") {
+                    alert("Removing purchased products from cart.");
+                    load_cart();
+                }
+            },
+            error: function() {
+                alert("Error during purchase products request.");
+            }
+        });
+    });
 });

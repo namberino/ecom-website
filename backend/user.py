@@ -140,4 +140,18 @@ def update_product_in_cart():
     cursor.execute("update Cart set amount = %s where user_id = %s and product_id = %s", (amount, user_id, product_id))
     db.commit()
 
-    return jsonify({"status": "success", "message": "Product amount updated successfully."})
+    return jsonify({"status": "success", "message": "Product amount updated successfully!"})
+
+
+@app.route("/purchase_product", methods=["POST"])
+def purchase_product():
+    user_id = request.json["user_id"]
+
+    cursor = db.cursor()
+    cursor.execute("delete from Cart where user_id = %s", (user_id,))
+    db.commit()
+
+    if cursor.rowcount > 0:
+        return jsonify({"status": "success", "message": "Purchase products in cart successfully!"})
+    else:
+        return jsonify({"status": "fail", "message": "Could not find any products in cart."})
