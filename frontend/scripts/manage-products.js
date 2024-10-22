@@ -58,7 +58,7 @@ $(document).ready(function() {
                         const row = `
                             <tr id="product-${product.id}">
                                 <td>${product.id}</td>
-                                <td>${product.name}</td>
+                                <td>${escape_html(product.name)}</td>
                                 <td>${product.price}</td>
                                 <td>${product.amount}</td>
                                 <td>${product.description}</td>

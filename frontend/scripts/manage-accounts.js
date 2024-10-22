@@ -71,8 +71,8 @@ $(document).ready(function() {
                         const row = `
                             <tr id="account-${account.id}">
                                 <td>${account.id}</td>
-                                <td>${account.name}</td>
-                                <td>${account.email}</td>
+                                <td>${escape_html(account.name)}</td>
+                                <td>${escape_html(account.email)}</td>
                                 <td>${account.password}</td>
                                 <td>${account.role}</td>
                                 <td>${buttons}</td>
