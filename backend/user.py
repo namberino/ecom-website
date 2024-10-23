@@ -143,6 +143,25 @@ def update_product_in_cart():
     return jsonify({"status": "success", "message": "Product amount updated successfully!"})
 
 
+@app.route("/get_cart_total", methods=["GET"])
+def get_cart_total():
+    user_id = request.args.get("user_id")
+
+    cursor = db.cursor()
+    cursor.execute("select Products.price, Cart.amount from Products join Cart on Products.id = Cart.product_id where Cart.user_id = %s", (user_id,))
+    prices = cursor.fetchall()
+
+    if prices:
+        total = 0
+        
+        for price in prices:
+            total += price[0] * price[1]
+
+        return jsonify({"status": "success", "message": "Calculated total of user's cart.", "total": total})
+    else:
+        return jsonify({"status": "fail", "message": "Failed to fetch prices from products in cart."})
+
+
 @app.route("/purchase_product", methods=["POST"])
 def purchase_product():
     user_id = request.json["user_id"]

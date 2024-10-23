@@ -155,6 +155,24 @@ $(document).ready(function() {
         const user_id = get_id_from_session_str(sessionStorage.getItem("session_string"));
 
         $.ajax({
+            url: `http://127.0.0.1:5000/get_cart_total?user_id=${user_id}`,
+            type: "GET",
+            async: false,
+            success: function(response) {
+                if (response.status == "success") {
+                    if (confirm("Total is " + response.total + ". Would to like to proceed with purchase?")) {
+                        purchase_cart(user_id);
+                    }
+                }
+            },
+            error: function() {
+                alert("Error during get cart total request.");
+            }
+        });
+    });
+
+    function purchase_cart(user_id) {
+        $.ajax({
             url: "http://127.0.0.1:5000/purchase_product",
             type: "POST",
             contentType: "application/json",
@@ -170,5 +188,5 @@ $(document).ready(function() {
                 alert("Error during purchase products request.");
             }
         });
-    });
+    }
 });
