@@ -12,7 +12,7 @@ $(document).ready(function() {
     let session_string = sessionStorage.getItem("session_string");
     if (session_string != null && session_string != "") {
         $.ajax({
-            url: "http://127.0.0.1:5000/validate_session",
+            url: "https://namnguyen0123.pythonanywhere.com/validate_session",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({ session_string: session_string }),
@@ -41,7 +41,7 @@ $(document).ready(function() {
     // product loading handling
     function load_products() {
         $.ajax({
-            url: "http://127.0.0.1:5000/get_products",
+            url: "https://namnguyen0123.pythonanywhere.com/get_products",
             type: "GET",
             success: function(response) {
                 if (response.status === "success") {
@@ -90,7 +90,7 @@ $(document).ready(function() {
         let user_id;
         
         $.ajax({
-            url: "http://127.0.0.1:5000/get_info_from_session",
+            url: "https://namnguyen0123.pythonanywhere.com/get_info_from_session",
             type: "POST",
             contentType: "application/json",
             async: false,
@@ -113,7 +113,7 @@ $(document).ready(function() {
         const user_id = get_id_from_session_str(sessionStorage.getItem("session_string"));
 
         $.ajax({
-            url: "http://127.0.0.1:5000/add_to_cart",
+            url: "https://namnguyen0123.pythonanywhere.com/add_to_cart",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({ product_id: product_id, user_id: user_id, amount: amount }),

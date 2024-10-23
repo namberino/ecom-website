@@ -12,7 +12,7 @@ $(document).ready(function() {
     let session_string = sessionStorage.getItem("session_string");
     if (session_string != null && session_string != "") {
         $.ajax({
-            url: "http://127.0.0.1:5000/validate_session",
+            url: "https://namnguyen0123.pythonanywhere.com/validate_session",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({ session_string: session_string }),
