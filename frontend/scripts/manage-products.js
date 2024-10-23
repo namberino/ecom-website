@@ -47,7 +47,7 @@ $(document).ready(function() {
     // product loading handling
     function load_products() {
         $.ajax({
-            url: "http://127.0.0.1:5000/get_products",
+            url: "https://namnguyen0123.pythonanywhere.com/get_products",
             type: "GET",
             success: function(response) {
                 if (response.status === "success") {
@@ -121,7 +121,7 @@ $(document).ready(function() {
     // product editing handling
     function edit_product(product_id) {
         $.ajax({
-            url: `http://127.0.0.1:5000/get_product?id=${product_id}`,
+            url: `https://namnguyen0123.pythonanywhere.com/get_product?id=${product_id}`,
             type: "GET",
             success: function(response) {
                 if (response.status == "success") {
