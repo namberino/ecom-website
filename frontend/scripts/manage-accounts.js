@@ -12,7 +12,7 @@ $(document).ready(function() {
     let session_string = sessionStorage.getItem("session_string");
     if (session_string != null && session_string != "") {
         $.ajax({
-            url: "http://127.0.0.1:5000/validate_session",
+            url: "https://namnguyen0123.pythonanywhere.com/validate_session",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({ session_string: session_string }),
@@ -45,7 +45,7 @@ $(document).ready(function() {
     // account loading handling
     function load_accounts() {
         $.ajax({
-            url: "http://127.0.0.1:5000/get_accounts",
+            url: "https://namnguyen0123.pythonanywhere.com/get_accounts",
             type: "GET",
             success: function(response) {
                 if (response.status === "success") {
@@ -107,7 +107,7 @@ $(document).ready(function() {
     function delete_account(account_id) {
         if (confirm("Are you sure you want to delete this account?")) {
             $.ajax({
-                url: `http://127.0.0.1:5000/delete_account?id=${account_id}`,
+                url: `https://namnguyen0123.pythonanywhere.com/delete_account?id=${account_id}`,
                 type: "DELETE",
                 success: function(response) {
                     alert(response.message);
@@ -126,7 +126,7 @@ $(document).ready(function() {
     // edit account handling
     function edit_account(account_id) {
         $.ajax({
-            url: `http://127.0.0.1:5000/get_account?id=${account_id}`,
+            url: `https://namnguyen0123.pythonanywhere.com/get_account?id=${account_id}`,
             type: "GET",
             success: function(response) {
                 if (response.status == "success") {
@@ -175,7 +175,7 @@ $(document).ready(function() {
         const password = $("#edit-account-password").val();
 
         $.ajax({
-            url: "http://127.0.0.1:5000/edit_account",
+            url: "https://namnguyen0123.pythonanywhere.com/edit_account",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({ id: account_id, name: name, email: email, password: password }),
@@ -209,7 +209,7 @@ $(document).ready(function() {
         const password = $("#create-account-password").val();
 
         $.ajax({
-            url: "http://127.0.0.1:5000/create_account",
+            url: "https://namnguyen0123.pythonanywhere.com/create_account",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({ name: name, email: email, password: password }),

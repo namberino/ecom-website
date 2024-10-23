@@ -12,7 +12,7 @@ $(document).ready(function() {
     let session_string = sessionStorage.getItem("session_string");
     if (session_string != null && session_string != "") {
         $.ajax({
-            url: "http://127.0.0.1:5000/validate_session",
+            url: "https://namnguyen0123.pythonanywhere.com/validate_session",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({ session_string: session_string }),
@@ -45,7 +45,7 @@ $(document).ready(function() {
     // product loading handling
     function load_products() {
         $.ajax({
-            url: "http://127.0.0.1:5000/get_products",
+            url: "https://namnguyen0123.pythonanywhere.com/get_products",
             type: "GET",
             success: function(response) {
                 if (response.status === "success") {
@@ -97,7 +97,7 @@ $(document).ready(function() {
     function delete_product(product_id) {
         if (confirm("Are you sure you want to delete this product?")) {
             $.ajax({
-                url: `http://127.0.0.1:5000/delete_product?id=${product_id}`,
+                url: `https://namnguyen0123.pythonanywhere.com/delete_product?id=${product_id}`,
                 type: "DELETE",
                 success: function(response) {
                     alert(response.message);
@@ -116,7 +116,7 @@ $(document).ready(function() {
     // product editing handling
     function edit_product(product_id) {
         $.ajax({
-            url: `http://127.0.0.1:5000/get_product?id=${product_id}`,
+            url: `https://namnguyen0123.pythonanywhere.com/get_product?id=${product_id}`,
             type: "GET",
             success: function(response) {
                 if (response.status == "success") {
@@ -156,7 +156,7 @@ $(document).ready(function() {
         const description = $("#edit-product-description").val();
 
         $.ajax({
-            url: "http://127.0.0.1:5000/edit_product",
+            url: "https://namnguyen0123.pythonanywhere.com/edit_product",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({ id: product_id, name: name, price: price, amount: amount, description: description }),
@@ -191,7 +191,7 @@ $(document).ready(function() {
         const description = $("#create-product-description").val();
 
         $.ajax({
-            url: "http://127.0.0.1:5000/create_product",
+            url: "https://namnguyen0123.pythonanywhere.com/create_product",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({ name: name, price: price, amount: amount, description: description }),
