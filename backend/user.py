@@ -167,6 +167,17 @@ def purchase_product():
     user_id = request.json["user_id"]
 
     cursor = db.cursor()
+
+    cursor.execute("select product_id, amount from Cart where user_id = %s", (user_id,))
+    products = cursor.fetchall()
+
+    for product in products:
+        cursor.execute("select amount from Products where id = %s", (product[0],))
+        amount = cursor.fetchone()
+
+        cursor.execute("update Products set amount = %s where id = %s", (int(amount[0]) - int(product[1]), product[0]))
+        db.commit()
+
     cursor.execute("delete from Cart where user_id = %s", (user_id,))
     db.commit()
 
