@@ -145,12 +145,16 @@ $(document).ready(function() {
                         $("#edit-account-email").hide();
                         $("label[for='edit-account-name']").hide();
                         $("label[for='edit-account-email']").hide();
+                        $("#edit-account-old-password").show();
+                        $("label[for='edit-account-old-password']").show();
                         $("#edit-account-header").html("Edit Password");
                     } else {
                         $("#edit-account-name").show();
                         $("#edit-account-email").show();
                         $("label[for='edit-account-name']").show();
                         $("label[for='edit-account-email']").show();
+                        $("#edit-account-old-password").hide();
+                        $("label[for='edit-account-old-password']").hide();
                     }
 
                     // show edit account modal
@@ -173,12 +177,13 @@ $(document).ready(function() {
         const name = $("#edit-account-name").val();
         const email = $("#edit-account-email").val();
         const password = $("#edit-account-password").val();
+        const old_password = $("#edit-account-old-password").val();
 
         $.ajax({
             url: "http://127.0.0.1:5000/edit_account",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ id: account_id, name: name, email: email, password: password }),
+            data: JSON.stringify({ id: account_id, name: name, email: email, password: password, old_password: old_password }),
             success: function(response) {
                 if (response.status === "success") {
                     alert(response.message);

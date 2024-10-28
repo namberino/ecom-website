@@ -73,11 +73,21 @@ def edit_account():
     name = request.json["name"]
     email = request.json["email"]
     password = request.json["password"]
+    old_password = request.json.get("old_password", "")
 
     if not name or not email:
         return jsonify({"status": "fail", "message": "Name and email must not be empty!"})
 
     cursor = db.cursor()
+
+    cursor.execute("select password, role from Users where id = %s", (account_id,))
+    account = cursor.fetchone()
+
+    if account[1] == "admin" and old_password:
+        if not bcrypt.checkpw(old_password.encode(), account[0].encode()):
+            return jsonify({"status": "fail", "message": "Old password is incorrect."})
+    else:
+        return jsonify({"status": "fail", "message": "Editing admin password requires old password."})
 
     cursor.execute("select * from Users where email = %s and not email = (select email from Users where id = %s)", (email, account_id))
     existing_account = cursor.fetchone()

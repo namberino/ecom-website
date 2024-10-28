@@ -66,13 +66,14 @@ $(document).ready(function() {
         const account_id = $("#account-id-field").val();
         const name = $("#name-input").val();
         const email = $("#email-input").val();
-        const password = $("#password-input").val();
+        const old_password = $("#old-password-input").val();
+        const new_password = $("#new-password-input").val();
 
         $.ajax({
             url: "http://127.0.0.1:5000/user_edit_info",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ id: account_id, name: name, email: email, password: password }),
+            data: JSON.stringify({ id: account_id, name: name, email: email, old_password: old_password, new_password: new_password }),
             success: function(response) {
                 if (response.status === "success") {
                     alert("Account info update success: " + response.message);

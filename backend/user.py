@@ -26,37 +26,41 @@ def user_edit_info():
     account_id = request.json["id"]
     name = request.json["name"]
     email = request.json["email"]
-    password = request.json["password"]
+    old_password = request.json.get("old_password", "")
+    new_password = request.json.get("new_password", "")
 
     if not name or not email:
         return jsonify({"status": "fail", "message": "Name and email must not be empty!"})
 
     cursor = db.cursor()
 
-    cursor.execute("select * from Users where email = %s and not email = (select email from Users where id = %s)", (email, account_id))
+    cursor.execute("select * from Users where email = %s and not id = %s", (email, account_id))
     existing_account = cursor.fetchone()
 
     if existing_account:
         return jsonify({"status": "fail", "message": "Email is already associated with another account."})
+
+    # verify old password first
+    if new_password:
+        cursor.execute("select password from Users where id = %s", (account_id,))
+        stored_password = cursor.fetchone()[0]
+        
+        if not bcrypt.checkpw(old_password.encode(), stored_password.encode()):
+            return jsonify({"status": "fail", "message": "Old password is incorrect."})
+        
+        # if old password is correct, hash new password
+        hashed_password = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()).decode()
+        cursor.execute("update Users set name = %s, email = %s, password = %s where id = %s", (name, email, hashed_password, account_id))
     else:
-        hashed_password = ""
+        # no password change, just update name and email
+        cursor.execute("update Users set name = %s, email = %s where id = %s", (name, email, account_id))
 
-        if password == "":
-            cursor.execute("update Users set name = %s, email = %s where id = %s", (name, email, account_id))
-            db.commit()
+    db.commit()
 
-            cursor.execute("select password from Users where id = %s", (account_id,))
-            password = cursor.fetchone()[0]
-            hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-        else:
-            hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-            cursor.execute("update Users set name = %s, email = %s, password = %s where id = %s", (name, email, hashed_password.decode(), account_id))
-            db.commit()
+    session_str = f"{email};{hashed_password};user"
+    encrypted_session_str = encrypt_session_string(session_str)
 
-        session_str = f"{email};{hashed_password.decode()};user"
-        encrypted_session_str = encrypt_session_string(session_str)
-
-        return jsonify({"status": "success", "message": "Account updated successfully!", "session_string": encrypted_session_str})
+    return jsonify({"status": "success", "message": "Account updated successfully!", "session_string": encrypted_session_str})
 
 
 @app.route("/add_to_cart", methods=["POST"])
