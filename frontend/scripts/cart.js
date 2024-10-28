@@ -123,7 +123,11 @@ $(document).ready(function() {
             contentType: "application/json",
             data: JSON.stringify({user_id: user_id, product_id: product_id, amount: amount}),
             success: function(response) {
-                alert(response.message);
+                if (response.stock_amount) {
+                    alert(response.message + " Only " + response.stock_amount + " products available.");
+                } else {
+                    alert(response.message);
+                }
             },
             error: function() {
                 alert("Error during update amount request.");

@@ -71,12 +71,22 @@ def add_to_cart():
 
     cursor = db.cursor()
 
+    cursor.execute("select amount from Products where id = %s", (product_id,))
+    stock_amount = cursor.fetchone()
+
+    if not stock_amount:
+        return jsonify({"status": "fail", "message": "Product not found."})
+
     cursor.execute("select id, amount from Cart where user_id = %s and product_id = %s", (account_id, product_id))
     cart_item = cursor.fetchone()
+
+    new_amount = amount if not cart_item else cart_item[1] + amount
+
+    if new_amount > stock_amount[0]:
+        return jsonify({"status": "fail", "message": "Not enough products available."})
     
     if cart_item:
         # update the amount of the existing product in the cart
-        new_amount = cart_item[1] + amount
         cursor.execute("update Cart set amount = %s where id = %s", (new_amount, cart_item[0]))
     else:
         # insert a new product into the cart
@@ -141,6 +151,16 @@ def update_product_in_cart():
         return jsonify({"status": "success", "message": "Amount must be an integer."})
 
     cursor = db.cursor()
+
+    cursor.execute("select amount from Products where id = %s", (product_id,))
+    stock_amount = cursor.fetchone()
+
+    if not stock_amount:
+        return jsonify({"status": "fail", "message": "Product not found."})
+
+    if amount > stock_amount[0]:
+        return jsonify({"status": "fail", "message": "Not enough products available.", "stock_amount": stock_amount[0]})
+
     cursor.execute("update Cart set amount = %s where user_id = %s and product_id = %s", (amount, user_id, product_id))
     db.commit()
 
