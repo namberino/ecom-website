@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_wtf import CSRFProtect
 from dotenv import load_dotenv
 import MySQLdb
 import bcrypt
@@ -10,7 +11,12 @@ import base64
 
 load_dotenv()
 app = Flask(__name__)
-CORS(app) # enables CORS for all routes
+
+allowed_origins = [
+    "http://127.0.0.1:5500"
+]
+
+CORS(app, origins=allowed_origins)
 public_key, private_key = rsa.newkeys(1024)
 
 
