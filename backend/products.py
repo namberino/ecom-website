@@ -2,17 +2,9 @@ from __main__ import app, db
 from flask import request, jsonify
 
 
-@app.route("/get_products", methods=["POST"])
+@app.route("/get_products", methods=["GET"])
 def get_products():
-    encrypted_session_str = request.json["session_string"]
-    session_str = decrypt_session_string(encrypted_session_str).split(";")
-
     cursor = db.cursor()
-
-    cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
-    is_admin = cursor.fetchone()
-    if not is_admin:
-        return jsonify({"status": "fail", "message": "Invalid session string, not an admin account"})
 
     cursor.execute("select * from Products")
     products = cursor.fetchall()

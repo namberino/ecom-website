@@ -46,9 +46,7 @@ $(document).ready(function() {
     function load_products() {
         $.ajax({
             url: "http://127.0.0.1:5000/get_products",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({session_string: session_string}),
+            type: "GET",
             success: function(response) {
                 if (response.status === "success") {
                     const products = response.products;
