@@ -1,11 +1,19 @@
-from __main__ import app, db
+from __main__ import app, db, decrypt_session_string, encrypt_session_string
 from flask import request, jsonify
 import bcrypt
 
 
-@app.route("/get_accounts", methods=["GET"])
+@app.route("/get_accounts", methods=["POST"])
 def get_accounts():
+    encrypted_session_str = request.json["session_string"]
+    session_str = decrypt_session_string(encrypted_session_str).split(";")
+
     cursor = db.cursor()
+
+    cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    is_admin = cursor.fetchone()
+    if not is_admin:
+        return jsonify({"status": "fail", "message": "Invalid session string, not an admin account"})
 
     cursor.execute("select * from Users")
     accounts = cursor.fetchall()
@@ -24,11 +32,18 @@ def get_accounts():
     return jsonify({"status": "success", "accounts": account_list})
 
 
-@app.route("/get_account", methods=["GET"])
+@app.route("/get_account", methods=["POST"])
 def get_account():
-    account_id = request.args.get("id")
+    account_id = request.json["id"]
+    encrypted_session_str = request.json["session_string"]
+    session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
+
+    cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    is_admin = cursor.fetchone()
+    if not is_admin:
+        return jsonify({"status": "fail", "message": "Invalid session string, not an admin account"})
 
     cursor.execute("select * from Users where id = %s", (account_id,))
     account = cursor.fetchone()
@@ -49,11 +64,18 @@ def create_account():
     name = request.json["name"]
     email = request.json["email"]
     password = request.json["password"]
+    encrypted_session_str = request.json["session_string"]
+    session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     if not name or not email or not password:
         return jsonify({"status": "fail", "message": "All fields must not be empty!"})
 
     cursor = db.cursor()
+
+    cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    is_admin = cursor.fetchone()
+    if not is_admin:
+        return jsonify({"status": "fail", "message": "Invalid session string, not an admin account"})
 
     cursor.execute("select * from Users where email = %s", (email,))
     existing_account = cursor.fetchone()
@@ -74,11 +96,18 @@ def edit_account():
     email = request.json["email"]
     password = request.json["password"]
     old_password = request.json.get("old_password", "")
+    encrypted_session_str = request.json["session_string"]
+    session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     if not name or not email:
         return jsonify({"status": "fail", "message": "Name and email must not be empty!"})
 
     cursor = db.cursor()
+
+    cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    is_admin = cursor.fetchone()
+    if not is_admin:
+        return jsonify({"status": "fail", "message": "Invalid session string, not an admin account"})
 
     cursor.execute("select password, role from Users where id = %s", (account_id,))
     account = cursor.fetchone()
@@ -86,7 +115,7 @@ def edit_account():
     if account[1] == "admin" and old_password:
         if not bcrypt.checkpw(old_password.encode(), account[0].encode()):
             return jsonify({"status": "fail", "message": "Old password is incorrect."})
-    else:
+    elif account[1] == "admin" and not old_password:
         return jsonify({"status": "fail", "message": "Editing admin password requires old password."})
 
     cursor.execute("select * from Users where email = %s and not email = (select email from Users where id = %s)", (email, account_id))
@@ -95,22 +124,42 @@ def edit_account():
     if existing_account:
         return jsonify({"status": "fail", "message": "Email is already associated with another account."})
     else:
+        session_str = ""
+
         if password == "":
             cursor.execute("update Users set name = %s, email = %s where id = %s", (name, email, account_id))
             db.commit()
+
+            if account[1] == "admin":
+                cursor.execute("select password, role from Users where role = admin")
+                result = cursor.fetchone()
+                session_str = f"{email};{result[0]};{result[1]}"
         else:
             hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
             cursor.execute("update Users set name = %s, email = %s, password = %s where id = %s", (name, email, hashed_password.decode(), account_id))
             db.commit()
+            
+            if account[1] == "admin":
+                session_str = f"{email};{hashed_password.decode()};{account[1]}"
+
+        if account[1] == "admin":
+            return jsonify({"status": "success", "message": "Updated admin account information!", "session_string": encrypt_session_string(session_str)})
 
         return jsonify({"status": "success", "message": "Account updated successfully!"})
 
 
-@app.route("/delete_account", methods=["DELETE"])
+@app.route("/delete_account", methods=["POST"])
 def delete_account():
-    account_id = request.args.get("id")
+    account_id = request.json["id"]
+    encrypted_session_str = request.json["session_string"]
+    session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
+
+    cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    is_admin = cursor.fetchone()
+    if not is_admin:
+        return jsonify({"status": "fail", "message": "Invalid session string, not an admin account"})
 
     cursor.execute("delete from Users where id = %s", (account_id,))
     db.commit()

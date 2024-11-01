@@ -46,7 +46,9 @@ $(document).ready(function() {
     function load_accounts() {
         $.ajax({
             url: "http://127.0.0.1:5000/get_accounts",
-            type: "GET",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({session_string: session_string}),
             success: function(response) {
                 if (response.status === "success") {
                     const accounts = response.accounts;
@@ -107,8 +109,10 @@ $(document).ready(function() {
     function delete_account(account_id) {
         if (confirm("Are you sure you want to delete this account?")) {
             $.ajax({
-                url: `http://127.0.0.1:5000/delete_account?id=${account_id}`,
-                type: "DELETE",
+                url: "http://127.0.0.1:5000/delete_account",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({id: account_id, session_string: session_string}),
                 success: function(response) {
                     alert(response.message);
                     if (response.status == "success") {
@@ -126,8 +130,10 @@ $(document).ready(function() {
     // edit account handling
     function edit_account(account_id) {
         $.ajax({
-            url: `http://127.0.0.1:5000/get_account?id=${account_id}`,
-            type: "GET",
+            url: "http://127.0.0.1:5000/get_account",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({id: account_id, session_string: session_string}),
             success: function(response) {
                 if (response.status == "success") {
                     const account = response.account;
@@ -183,10 +189,15 @@ $(document).ready(function() {
             url: "http://127.0.0.1:5000/edit_account",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ id: account_id, name: name, email: email, password: password, old_password: old_password }),
+            data: JSON.stringify({ id: account_id, name: name, email: email, password: password, old_password: old_password, session_string: session_string }),
             success: function(response) {
                 if (response.status === "success") {
                     alert(response.message);
+                    
+                    if (response.session_string) {
+                        sessionStorage.setItem("session_string", response.session_string);
+                    }
+
                     load_accounts(); // reload account list
                     $("#edit-account-modal").hide();
                 } else {
@@ -217,7 +228,7 @@ $(document).ready(function() {
             url: "http://127.0.0.1:5000/create_account",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ name: name, email: email, password: password }),
+            data: JSON.stringify({ name: name, email: email, password: password, session_string: session_string }),
             success: function(response) {
                 if (response.status === "success") {
                     alert(response.message);

@@ -46,7 +46,9 @@ $(document).ready(function() {
     function load_products() {
         $.ajax({
             url: "http://127.0.0.1:5000/get_products",
-            type: "GET",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({session_string: session_string}),
             success: function(response) {
                 if (response.status === "success") {
                     const products = response.products;
@@ -97,8 +99,10 @@ $(document).ready(function() {
     function delete_product(product_id) {
         if (confirm("Are you sure you want to delete this product?")) {
             $.ajax({
-                url: `http://127.0.0.1:5000/delete_product?id=${product_id}`,
-                type: "DELETE",
+                url: "http://127.0.0.1:5000/delete_product",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({id: product_id, session_string: session_string}),
                 success: function(response) {
                     alert(response.message);
                     if (response.status === "success") {
@@ -116,8 +120,10 @@ $(document).ready(function() {
     // product editing handling
     function edit_product(product_id) {
         $.ajax({
-            url: `http://127.0.0.1:5000/get_product?id=${product_id}`,
-            type: "GET",
+            url: "http://127.0.0.1:5000/get_product",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({id: product_id, session_string: session_string}),
             success: function(response) {
                 if (response.status == "success") {
                     const product = response.product;
