@@ -27,15 +27,8 @@ def get_products():
 @app.route("/get_product", methods=["POST"])
 def get_product():
     product_id = request.json["id"]
-    encrypted_session_str = request.json["session_string"]
-    session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
-
-    cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
-    is_admin = cursor.fetchone()
-    if not is_admin:
-        return jsonify({"status": "fail", "message": "Invalid session string, not an admin account"})
 
     cursor.execute("select * from Products where id = %s", (product_id,))
     product = cursor.fetchone()
@@ -58,6 +51,15 @@ def create_product():
     price = request.json["price"]
     amount = request.json["amount"]
     description = request.json["description"]
+    encrypted_session_str = request.json["session_string"]
+    session_str = decrypt_session_string(encrypted_session_str).split(";")
+
+    cursor = db.cursor()
+
+    cursor.execute("select * from Users where email = %s and password = %s and role = 'admin'", (session_str[0], session_str[1]))
+    is_admin = cursor.fetchone()
+    if not is_admin:
+        return jsonify({"status": "fail", "message": "Invalid session string, not an admin account"})
 
     if not name or not price or not amount or not description:
         return jsonify({"status": "fail", "message": "All fields must not be empty!"})
@@ -67,8 +69,6 @@ def create_product():
         int(amount)
     except:
         return jsonify({"status": "fail", "message": "Invalid data type for price and amount"})
-
-    cursor = db.cursor()
 
     cursor.execute("select * from Products where name = %s", (name,))
     product = cursor.fetchone()
@@ -88,6 +88,15 @@ def edit_product():
     price = request.json["price"]
     amount = request.json["amount"]
     description = request.json["description"]
+    encrypted_session_str = request.json["session_string"]
+    session_str = decrypt_session_string(encrypted_session_str).split(";")
+
+    cursor = db.cursor()
+
+    cursor.execute("select * from Users where email = %s and password = %s and role = 'admin'", (session_str[0], session_str[1]))
+    is_admin = cursor.fetchone()
+    if not is_admin:
+        return jsonify({"status": "fail", "message": "Invalid session string, not an admin account"})
 
     if not prod_id or not name or not price or not amount or not description:
         return jsonify({"status": "fail", "message": "All fields must not be empty!"})
@@ -97,8 +106,6 @@ def edit_product():
         int(amount)
     except:
         return jsonify({"status": "fail", "message": "Invalid data type for price and amount"})
-
-    cursor = db.cursor()
 
     cursor.execute("select * from Products where name = %s and not name = (select name from Products where id = %s)", (name, prod_id))
     existing_product = cursor.fetchone()
@@ -119,7 +126,7 @@ def delete_product():
 
     cursor = db.cursor()
 
-    cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    cursor.execute("select * from Users where email = %s and password = %s and role = 'admin'", (session_str[0], session_str[1]))
     is_admin = cursor.fetchone()
     if not is_admin:
         return jsonify({"status": "fail", "message": "Invalid session string, not an admin account"})

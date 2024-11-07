@@ -10,7 +10,7 @@ def get_accounts():
 
     cursor = db.cursor()
 
-    cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    cursor.execute("select * from Users where email = %s and password = %s and role = 'admin'", (session_str[0], session_str[1]))
     is_admin = cursor.fetchone()
     if not is_admin:
         return jsonify({"status": "fail", "message": "Invalid session string, not an admin account"})
@@ -40,7 +40,7 @@ def get_account():
 
     cursor = db.cursor()
 
-    cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    cursor.execute("select * from Users where email = %s and password = %s and role = 'admin'", (session_str[0], session_str[1]))
     is_admin = cursor.fetchone()
     if not is_admin:
         return jsonify({"status": "fail", "message": "Invalid session string, not an admin account"})
@@ -72,7 +72,7 @@ def create_account():
 
     cursor = db.cursor()
 
-    cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    cursor.execute("select * from Users where email = %s and password = %s and role = 'admin'", (session_str[0], session_str[1]))
     is_admin = cursor.fetchone()
     if not is_admin:
         return jsonify({"status": "fail", "message": "Invalid session string, not an admin account"})
@@ -104,7 +104,7 @@ def edit_account():
 
     cursor = db.cursor()
 
-    cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    cursor.execute("select * from Users where email = %s and password = %s and role = 'admin'", (session_str[0], session_str[1]))
     is_admin = cursor.fetchone()
     if not is_admin:
         return jsonify({"status": "fail", "message": "Invalid session string, not an admin account"})
@@ -156,7 +156,7 @@ def delete_account():
 
     cursor = db.cursor()
 
-    cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    cursor.execute("select * from Users where email = %s and password = %s and role = 'admin'", (session_str[0], session_str[1]))
     is_admin = cursor.fetchone()
     if not is_admin:
         return jsonify({"status": "fail", "message": "Invalid session string, not an admin account"})

@@ -121,7 +121,7 @@ $(document).ready(function() {
             url: "http://127.0.0.1:5000/get_product",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({id: product_id, session_string: session_string}),
+            data: JSON.stringify({id: product_id}),
             success: function(response) {
                 if (response.status == "success") {
                     const product = response.product;
@@ -163,7 +163,7 @@ $(document).ready(function() {
             url: "http://127.0.0.1:5000/edit_product",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ id: product_id, name: name, price: price, amount: amount, description: description }),
+            data: JSON.stringify({ id: product_id, name: name, price: price, amount: amount, description: description, session_string: session_string }),
             success: function(response) {
                 if (response.status === "success") {
                     alert(response.message);
@@ -198,7 +198,7 @@ $(document).ready(function() {
             url: "http://127.0.0.1:5000/create_product",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ name: name, price: price, amount: amount, description: description }),
+            data: JSON.stringify({ name: name, price: price, amount: amount, description: description, session_string: session_string }),
             success: function(response) {
                 if (response.status === "success") {
                     alert(response.message);
