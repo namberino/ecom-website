@@ -5,7 +5,7 @@ import bcrypt
 
 @app.route("/get_accounts", methods=["POST"])
 def get_accounts():
-    encrypted_session_str = request.json["session_string"]
+    encrypted_session_str = request.headers['Auth-Token']
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()

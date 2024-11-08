@@ -46,9 +46,11 @@ $(document).ready(function() {
     function load_accounts() {
         $.ajax({
             url: "http://127.0.0.1:5000/get_accounts",
+            headers: {
+                'Auth-Token': sessionStorage.getItem("session_string")
+            },
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({session_string: session_string}),
             success: function(response) {
                 if (response.status === "success") {
                     const accounts = response.accounts;
@@ -131,9 +133,12 @@ $(document).ready(function() {
     function edit_account(account_id) {
         $.ajax({
             url: "http://127.0.0.1:5000/get_account",
+            headers: {
+                'Auth-Token': sessionStorage.getItem("session_string")
+            },
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({id: account_id, session_string: session_string}),
+            data: JSON.stringify({id: account_id}),
             success: function(response) {
                 if (response.status == "success") {
                     const account = response.account;
