@@ -13,9 +13,11 @@ $(document).ready(function() {
     if (session_string != null && session_string != "") {
         $.ajax({
             url: "http://127.0.0.1:5000/validate_session",
+            headers: {
+                "Auth-Token": session_string
+            },
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ session_string: session_string }),
             success: function(response) {
                 if (response.status == "fail") {
                     alert("Session string validation failed");
@@ -47,7 +49,7 @@ $(document).ready(function() {
         $.ajax({
             url: "http://127.0.0.1:5000/get_accounts",
             headers: {
-                'Auth-Token': sessionStorage.getItem("session_string")
+                "Auth-Token": sessionStorage.getItem("session_string")
             },
             type: "POST",
             contentType: "application/json",
@@ -112,9 +114,12 @@ $(document).ready(function() {
         if (confirm("Are you sure you want to delete this account?")) {
             $.ajax({
                 url: "http://127.0.0.1:5000/delete_account",
+                headers: {
+                    "Auth-Token": sessionStorage.getItem("session_string")
+                },
                 type: "POST",
                 contentType: "application/json",
-                data: JSON.stringify({id: account_id, session_string: session_string}),
+                data: JSON.stringify({id: account_id}),
                 success: function(response) {
                     alert(response.message);
                     if (response.status == "success") {
@@ -134,7 +139,7 @@ $(document).ready(function() {
         $.ajax({
             url: "http://127.0.0.1:5000/get_account",
             headers: {
-                'Auth-Token': sessionStorage.getItem("session_string")
+                "Auth-Token": sessionStorage.getItem("session_string")
             },
             type: "POST",
             contentType: "application/json",
@@ -192,9 +197,12 @@ $(document).ready(function() {
 
         $.ajax({
             url: "http://127.0.0.1:5000/edit_account",
+            headers: {
+                "Auth-Token": sessionStorage.getItem("session_string")
+            },
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ id: account_id, name: name, email: email, password: password, old_password: old_password, session_string: session_string }),
+            data: JSON.stringify({ id: account_id, name: name, email: email, password: password, old_password: old_password }),
             success: function(response) {
                 if (response.status === "success") {
                     alert(response.message);
@@ -231,9 +239,12 @@ $(document).ready(function() {
 
         $.ajax({
             url: "http://127.0.0.1:5000/create_account",
+            headers: {
+                "Auth-Token": sessionStorage.getItem("session_string")
+            },
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ name: name, email: email, password: password, session_string: session_string }),
+            data: JSON.stringify({ name: name, email: email, password: password }),
             success: function(response) {
                 if (response.status === "success") {
                     alert(response.message);

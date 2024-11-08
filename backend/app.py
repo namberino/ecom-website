@@ -98,7 +98,7 @@ def register():
 # endpoint for session string validation
 @app.route("/validate_session", methods=["POST"])
 def validate_session():
-    encrypted_session_str = request.json["session_string"]
+    encrypted_session_str = request.headers["session_string"]
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()

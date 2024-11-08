@@ -13,9 +13,11 @@ $(document).ready(function() {
     if (session_string != null && session_string != "") {
         $.ajax({
             url: "http://127.0.0.1:5000/validate_session",
+            headers: {
+                "Auth-Token": session_string
+            },
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ session_string: session_string }),
             success: function(response) {
                 if (response.status == "fail") {
                     alert("Session string validation failed");
@@ -98,9 +100,12 @@ $(document).ready(function() {
         if (confirm("Are you sure you want to delete this product?")) {
             $.ajax({
                 url: "http://127.0.0.1:5000/delete_product",
+                headers: {
+                    "Auth-Token": sessionStorage.getItem("session_string")
+                },
                 type: "POST",
                 contentType: "application/json",
-                data: JSON.stringify({id: product_id, session_string: session_string}),
+                data: JSON.stringify({id: product_id}),
                 success: function(response) {
                     alert(response.message);
                     if (response.status === "success") {
@@ -161,9 +166,12 @@ $(document).ready(function() {
 
         $.ajax({
             url: "http://127.0.0.1:5000/edit_product",
+            headers: {
+                "Auth-Token": sessionStorage.getItem("session_string")
+            },
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ id: product_id, name: name, price: price, amount: amount, description: description, session_string: session_string }),
+            data: JSON.stringify({ id: product_id, name: name, price: price, amount: amount, description: description }),
             success: function(response) {
                 if (response.status === "success") {
                     alert(response.message);
@@ -196,9 +204,12 @@ $(document).ready(function() {
 
         $.ajax({
             url: "http://127.0.0.1:5000/create_product",
+            headers: {
+                "Auth-Token": sessionStorage.getItem("session_string")
+            },
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ name: name, price: price, amount: amount, description: description, session_string: session_string }),
+            data: JSON.stringify({ name: name, price: price, amount: amount, description: description }),
             success: function(response) {
                 if (response.status === "success") {
                     alert(response.message);

@@ -5,7 +5,7 @@ import bcrypt
 
 @app.route("/get_accounts", methods=["POST"])
 def get_accounts():
-    encrypted_session_str = request.headers['Auth-Token']
+    encrypted_session_str = request.headers["Auth-Token"]
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
@@ -35,7 +35,7 @@ def get_accounts():
 @app.route("/get_account", methods=["POST"])
 def get_account():
     account_id = request.json["id"]
-    encrypted_session_str = request.json["session_string"]
+    encrypted_session_str = request.headers["Auth-Token"]
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
@@ -64,7 +64,7 @@ def create_account():
     name = request.json["name"]
     email = request.json["email"]
     password = request.json["password"]
-    encrypted_session_str = request.json["session_string"]
+    encrypted_session_str = request.headers["Auth-Token"]
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     if not name or not email or not password:
@@ -96,7 +96,7 @@ def edit_account():
     email = request.json["email"]
     password = request.json["password"]
     old_password = request.json.get("old_password", "")
-    encrypted_session_str = request.json["session_string"]
+    encrypted_session_str = request.headers["Auth-Token"]
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     if not name or not email:
@@ -151,7 +151,7 @@ def edit_account():
 @app.route("/delete_account", methods=["POST"])
 def delete_account():
     account_id = request.json["id"]
-    encrypted_session_str = request.json["session_string"]
+    encrypted_session_str = request.headers["Auth-Token"]
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()

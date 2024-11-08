@@ -51,7 +51,7 @@ def create_product():
     price = request.json["price"]
     amount = request.json["amount"]
     description = request.json["description"]
-    encrypted_session_str = request.json["session_string"]
+    encrypted_session_str = request.headers["Auth-Token"]
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
@@ -88,7 +88,7 @@ def edit_product():
     price = request.json["price"]
     amount = request.json["amount"]
     description = request.json["description"]
-    encrypted_session_str = request.json["session_string"]
+    encrypted_session_str = request.headers["Auth-Token"]
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
@@ -121,7 +121,7 @@ def edit_product():
 @app.route("/delete_product", methods=["POST"])
 def delete_product():
     product_id = request.json["id"]
-    encrypted_session_str = request.json["session_string"]
+    encrypted_session_str = request.headers["Auth-Token"]
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
