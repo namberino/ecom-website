@@ -3,9 +3,13 @@ from flask import request, jsonify
 import bcrypt
 
 
-@app.route("/get_accounts", methods=["POST"])
+@app.route("/get_accounts", methods=["GET"])
 def get_accounts():
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Could not obtain session token in request."})
+
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
@@ -32,10 +36,14 @@ def get_accounts():
     return jsonify({"status": "success", "accounts": account_list})
 
 
-@app.route("/get_account", methods=["POST"])
+@app.route("/get_account", methods=["GET"])
 def get_account():
-    account_id = request.json["id"]
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        account_id = request.args["id"]
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+    
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
@@ -61,10 +69,14 @@ def get_account():
 
 @app.route("/create_account", methods=["POST"])
 def create_account():
-    name = request.json["name"]
-    email = request.json["email"]
-    password = request.json["password"]
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        name = request.json["name"]
+        email = request.json["email"]
+        password = request.json["password"]
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     if not name or not email or not password:
@@ -91,12 +103,16 @@ def create_account():
 
 @app.route("/edit_account", methods=["POST"])
 def edit_account():
-    account_id = request.json["id"]
-    name = request.json["name"]
-    email = request.json["email"]
-    password = request.json["password"]
-    old_password = request.json.get("old_password", "")
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        account_id = request.json["id"]
+        name = request.json["name"]
+        email = request.json["email"]
+        password = request.json["password"]
+        old_password = request.json.get("old_password", "")
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     if not name or not email:
@@ -148,10 +164,14 @@ def edit_account():
         return jsonify({"status": "success", "message": "Account updated successfully!"})
 
 
-@app.route("/delete_account", methods=["POST"])
+@app.route("/delete_account", methods=["DELETE"])
 def delete_account():
-    account_id = request.json["id"]
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        account_id = request.args["id"]
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()

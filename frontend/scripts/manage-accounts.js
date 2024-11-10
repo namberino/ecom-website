@@ -51,8 +51,7 @@ $(document).ready(function() {
             headers: {
                 "Auth-Token": sessionStorage.getItem("session_string")
             },
-            type: "POST",
-            contentType: "application/json",
+            type: "GET",
             success: function(response) {
                 if (response.status === "success") {
                     const accounts = response.accounts;
@@ -113,13 +112,11 @@ $(document).ready(function() {
     function delete_account(account_id) {
         if (confirm("Are you sure you want to delete this account?")) {
             $.ajax({
-                url: "http://127.0.0.1:5000/delete_account",
+                url: `http://127.0.0.1:5000/delete_account?id=${account_id}`,
                 headers: {
                     "Auth-Token": sessionStorage.getItem("session_string")
                 },
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify({id: account_id}),
+                type: "DELETE",
                 success: function(response) {
                     alert(response.message);
                     if (response.status == "success") {
@@ -137,13 +134,11 @@ $(document).ready(function() {
     // edit account handling
     function edit_account(account_id) {
         $.ajax({
-            url: "http://127.0.0.1:5000/get_account",
+            url: `http://127.0.0.1:5000/get_account?id=${account_id}`,
             headers: {
                 "Auth-Token": sessionStorage.getItem("session_string")
             },
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({id: account_id}),
+            type: "GET",
             success: function(response) {
                 if (response.status == "success") {
                     const account = response.account;

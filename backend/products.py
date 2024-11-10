@@ -1,4 +1,4 @@
-from __main__ import app, db
+from __main__ import app, db, decrypt_session_string
 from flask import request, jsonify
 
 
@@ -24,12 +24,12 @@ def get_products():
     return jsonify({"status": "success", "products": product_list})
 
 
-@app.route("/get_product", methods=["POST"])
+@app.route("/get_product", methods=["GET"])
 def get_product():
     try:
-        product_id = request.json["id"]
+        product_id = request.args["id"]
     except:
-        return ({"status": "fail", "message": "Invalid amount of variables."})
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
 
     cursor = db.cursor()
 
@@ -50,11 +50,15 @@ def get_product():
 
 @app.route("/create_product", methods=["POST"])
 def create_product():
-    name = request.json["name"]
-    price = request.json["price"]
-    amount = request.json["amount"]
-    description = request.json["description"]
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        name = request.json["name"]
+        price = request.json["price"]
+        amount = request.json["amount"]
+        description = request.json["description"]
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
@@ -86,12 +90,16 @@ def create_product():
 
 @app.route("/edit_product", methods=["POST"])
 def edit_product():
-    prod_id = request.json["id"]
-    name = request.json["name"]
-    price = request.json["price"]
-    amount = request.json["amount"]
-    description = request.json["description"]
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        prod_id = request.json["id"]
+        name = request.json["name"]
+        price = request.json["price"]
+        amount = request.json["amount"]
+        description = request.json["description"]
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+    
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
@@ -121,10 +129,14 @@ def edit_product():
         return jsonify({"status": "success", "message": "Product updated successfully!"})
 
 
-@app.route("/delete_product", methods=["POST"])
+@app.route("/delete_product", methods=["DELETE"])
 def delete_product():
-    product_id = request.json["id"]
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        product_id = request.args["id"]
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
