@@ -48,8 +48,14 @@ import user
 # endpoint for login
 @app.route("/login", methods=["POST"])
 def login():
-    email = request.json["email"]
-    password = request.json["password"]
+    try:
+        email = request.json["email"]
+        password = request.json["password"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
+    if (email == "" or password == ""):
+        return ({"status": "fail", "message": "Variables in request cannot be empty."})
 
     # get the password of email from db
     cursor = db.cursor()
@@ -74,9 +80,15 @@ def login():
 # endpoint for registration
 @app.route("/register", methods=["POST"])
 def register():
-    name = request.json["name"]
-    email = request.json["email"]
-    password = request.json["password"]
+    try:
+        name = request.json["name"]
+        email = request.json["email"]
+        password = request.json["password"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
+    if (name == "" or email == "" or password == ""):
+        return ({"status": "fail", "message": "Variables in request cannot be empty."})
 
     cursor = db.cursor()
 
@@ -98,7 +110,14 @@ def register():
 # endpoint for session string validation
 @app.route("/validate_session", methods=["POST"])
 def validate_session():
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Could not obtain session token in request."})
+
+    if (encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Session token cannot be empty."})
+
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()

@@ -5,7 +5,14 @@ import bcrypt
 
 @app.route("/get_info_from_session", methods=["GET"])
 def get_info_from_session():
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Could not obtain session token in request."})
+
+    if (encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Session token cannot be empty."})
+
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
@@ -23,16 +30,26 @@ def get_info_from_session():
 
 @app.route("/user_edit_info", methods=["POST"])
 def user_edit_info():
-    account_id = request.json["id"]
-    name = request.json["name"]
-    email = request.json["email"]
-    old_password = request.json.get("old_password", "")
-    new_password = request.json.get("new_password", "")
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        account_id = request.json["id"]
+        name = request.json["name"]
+        email = request.json["email"]
+        old_password = request.json.get("old_password", "")
+        new_password = request.json.get("new_password", "")
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
+    if (account_id == "" or encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Variables in request cannot be empty (except for the password fields)."})
+
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     if not name or not email:
         return jsonify({"status": "fail", "message": "Name and email must not be empty!"})
+
+    if not old_password:
+        return jsonify({"status": "fail", "message": "Old password is required for editing."})
 
     cursor = db.cursor()
 
@@ -47,7 +64,9 @@ def user_edit_info():
         return jsonify({"status": "fail", "message": "Email is already associated with another account."})
 
     # verify old password first
+    hashed_password = session_str[1]
     if new_password:
+        print("has new password: " + new_password)
         cursor.execute("select password from Users where id = %s", (account_id,))
         stored_password = cursor.fetchone()[0]
         
@@ -58,6 +77,12 @@ def user_edit_info():
         hashed_password = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()).decode()
         cursor.execute("update Users set name = %s, email = %s, password = %s where id = %s", (name, email, hashed_password, account_id))
     else:
+        cursor.execute("select password from Users where id = %s", (account_id,))
+        stored_password = cursor.fetchone()[0]
+        
+        if not bcrypt.checkpw(old_password.encode(), stored_password.encode()):
+            return jsonify({"status": "fail", "message": "Old password is incorrect."})
+
         # no password change, just update name and email
         cursor.execute("update Users set name = %s, email = %s where id = %s", (name, email, account_id))
 
@@ -71,10 +96,22 @@ def user_edit_info():
 
 @app.route("/add_to_cart", methods=["POST"])
 def add_to_cart():
-    product_id = request.json["product_id"]
-    account_id = request.json["user_id"]
-    amount = request.json["amount"]
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        product_id = request.json["product_id"]
+        account_id = request.json["user_id"]
+        amount = request.json["amount"]
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
+    if (product_id == "" or account_id == "" or amount == "" or encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Variables in request cannot be empty."})
+
+    try:
+        int(amount)
+    except:
+        return ({"status": "fail", "message": "Amount must be an integer."})
+
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
@@ -116,8 +153,15 @@ def add_to_cart():
 
 @app.route("/get_cart", methods=["GET"])
 def get_cart():
-    user_id = request.args.get("id")
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        user_id = request.args.get("id")
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
+    if (user_id == "" or encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Variables in request cannot be empty."})
+
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
@@ -153,9 +197,16 @@ def get_cart():
 
 @app.route("/del_product_from_cart", methods=["DELETE"])
 def del_product_from_cart():
-    user_id = request.args.get("user_id")
-    product_id = request.args.get("product_id")
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        user_id = request.args.get("user_id")
+        product_id = request.args.get("product_id")
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
+    if (user_id == "" or product_id == "" or encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Variables in request cannot be empty."})
+
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
@@ -180,10 +231,17 @@ def del_product_from_cart():
 
 @app.route("/update_product_in_cart", methods=["POST"])
 def update_product_in_cart():
-    user_id = request.json["user_id"]
-    product_id = request.json["product_id"]
-    amount = request.json["amount"]
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        user_id = request.json["user_id"]
+        product_id = request.json["product_id"]
+        amount = request.json["amount"]
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
+    if (user_id == "" or product_id == "" or amount == "" or encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Variables in request cannot be empty."})
+
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     try:
@@ -219,8 +277,15 @@ def update_product_in_cart():
 
 @app.route("/get_cart_total", methods=["GET"])
 def get_cart_total():
-    user_id = request.args.get("user_id")
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        user_id = request.args.get("user_id")
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
+    if (user_id == "" or encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Variables in request cannot be empty."})
+        
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
@@ -250,8 +315,15 @@ def get_cart_total():
 
 @app.route("/purchase_product", methods=["POST"])
 def purchase_product():
-    user_id = request.json["user_id"]
-    encrypted_session_str = request.headers["Auth-Token"]
+    try:
+        user_id = request.json["user_id"]
+        encrypted_session_str = request.headers["Auth-Token"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
+    if (user_id == "" or encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Variables in request cannot be empty."})
+
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()

@@ -31,6 +31,9 @@ def get_product():
     except:
         return ({"status": "fail", "message": "Invalid amount of variables in request."})
 
+    if (product_id == ""):
+        return ({"status": "fail", "message": "Variables in request cannot be empty."})
+
     cursor = db.cursor()
 
     cursor.execute("select * from Products where id = %s", (product_id,))
@@ -58,6 +61,9 @@ def create_product():
         encrypted_session_str = request.headers["Auth-Token"]
     except:
         return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
+    if (encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Session token cannot be empty."})
 
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
@@ -99,6 +105,9 @@ def edit_product():
         encrypted_session_str = request.headers["Auth-Token"]
     except:
         return ({"status": "fail", "message": "Invalid amount of variables in request."})
+        
+    if (encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Session token cannot be empty."})
     
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
@@ -136,6 +145,9 @@ def delete_product():
         encrypted_session_str = request.headers["Auth-Token"]
     except:
         return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
+    if (product_id == "" or encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Variables in request cannot be empty."})
 
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 

@@ -10,6 +10,9 @@ def get_accounts():
     except:
         return ({"status": "fail", "message": "Could not obtain session token in request."})
 
+    if (encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Session token cannot be empty."})
+
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
@@ -43,6 +46,9 @@ def get_account():
         encrypted_session_str = request.headers["Auth-Token"]
     except:
         return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
+    if (account_id == "" or encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Variables in request cannot be empty."})
     
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
@@ -76,6 +82,9 @@ def create_account():
         encrypted_session_str = request.headers["Auth-Token"]
     except:
         return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
+    if (encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Session token cannot be empty."})
 
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
@@ -112,6 +121,9 @@ def edit_account():
         encrypted_session_str = request.headers["Auth-Token"]
     except:
         return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
+    if (account_id == "" or encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Variables in request cannot be empty (except for the password fields)."})
 
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
@@ -171,6 +183,9 @@ def delete_account():
         encrypted_session_str = request.headers["Auth-Token"]
     except:
         return ({"status": "fail", "message": "Invalid amount of variables in request."})
+
+    if (account_id == "" or encrypted_session_str == ""):
+        return ({"status": "fail", "message": "Variables in request cannot be empty."})
 
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
