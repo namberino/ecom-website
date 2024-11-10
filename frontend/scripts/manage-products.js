@@ -12,7 +12,7 @@ $(document).ready(function() {
     let session_string = sessionStorage.getItem("session_string");
     if (session_string != null && session_string != "") {
         $.ajax({
-            url: "http://127.0.0.1:5000/validate_session",
+            url: "https://namnguyen0123.pythonanywhere.com/validate_session",
             headers: {
                 "Auth-Token": session_string
             },
@@ -99,7 +99,7 @@ $(document).ready(function() {
     function delete_product(product_id) {
         if (confirm("Are you sure you want to delete this product?")) {
             $.ajax({
-                url: `http://127.0.0.1:5000/delete_product?id=${product_id}`,
+                url: `https://namnguyen0123.pythonanywhere.com/delete_product?id=${product_id}`,
                 headers: {
                     "Auth-Token": sessionStorage.getItem("session_string")
                 },
@@ -161,7 +161,7 @@ $(document).ready(function() {
         const description = $("#edit-product-description").val();
 
         $.ajax({
-            url: "http://127.0.0.1:5000/edit_product",
+            url: "https://namnguyen0123.pythonanywhere.com/edit_product",
             headers: {
                 "Auth-Token": sessionStorage.getItem("session_string")
             },
@@ -199,7 +199,7 @@ $(document).ready(function() {
         const description = $("#create-product-description").val();
 
         $.ajax({
-            url: "http://127.0.0.1:5000/create_product",
+            url: "https://namnguyen0123.pythonanywhere.com/create_product",
             headers: {
                 "Auth-Token": sessionStorage.getItem("session_string")
             },

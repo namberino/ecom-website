@@ -12,7 +12,7 @@ $(document).ready(function() {
     let session_string = sessionStorage.getItem("session_string");
     if (session_string != null && session_string != "") {
         $.ajax({
-            url: "http://127.0.0.1:5000/validate_session",
+            url: "https://namnguyen0123.pythonanywhere.com/validate_session",
             headers: {
                 "Auth-Token": session_string
             },
@@ -44,7 +44,7 @@ $(document).ready(function() {
     function display_user_info() {
         let sess_str = sessionStorage.getItem("session_string");
         $.ajax({
-            url: "http://127.0.0.1:5000/get_info_from_session",
+            url: "https://namnguyen0123.pythonanywhere.com/get_info_from_session",
             headers: {
                 "Auth-Token": sess_str
             },
@@ -73,7 +73,7 @@ $(document).ready(function() {
         const new_password = $("#new-password-input").val();
 
         $.ajax({
-            url: "http://127.0.0.1:5000/user_edit_info",
+            url: "https://namnguyen0123.pythonanywhere.com/user_edit_info",
             headers: {
                 "Auth-Token": sessionStorage.getItem("session_string")
             },

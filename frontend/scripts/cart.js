@@ -12,7 +12,7 @@ $(document).ready(function() {
     let session_string = sessionStorage.getItem("session_string");
     if (session_string != null && session_string != "") {
         $.ajax({
-            url: "http://127.0.0.1:5000/validate_session",
+            url: "https://namnguyen0123.pythonanywhere.com/validate_session",
             headers: {
                 "Auth-Token": session_string
             },
@@ -43,7 +43,7 @@ $(document).ready(function() {
         let user_id;
         
         $.ajax({
-            url: "http://127.0.0.1:5000/get_info_from_session",
+            url: "https://namnguyen0123.pythonanywhere.com/get_info_from_session",
             headers: {
                 "Auth-Token": session_string
             },
@@ -70,7 +70,7 @@ $(document).ready(function() {
         const user_id = get_id_from_session_str(sessionStorage.getItem("session_string"));
 
         $.ajax({
-            url: `http://127.0.0.1:5000/get_cart?id=${user_id}`,
+            url: `https://namnguyen0123.pythonanywhere.com/get_cart?id=${user_id}`,
             headers: {
                 "Auth-Token": sessionStorage.getItem("session_string")
             },
@@ -125,7 +125,7 @@ $(document).ready(function() {
 
     function update_amount(user_id, product_id, amount) {
         $.ajax({
-            url: "http://127.0.0.1:5000/update_product_in_cart",
+            url: "https://namnguyen0123.pythonanywhere.com/update_product_in_cart",
             headers: {
                 "Auth-Token": sessionStorage.getItem("session_string")
             },
@@ -148,7 +148,7 @@ $(document).ready(function() {
 
     function del_prod_from_cart(user_id, product_id) {
         $.ajax({
-            url: `http://127.0.0.1:5000/del_product_from_cart?user_id=${user_id}&product_id=${product_id}`,
+            url: `https://namnguyen0123.pythonanywhere.com/del_product_from_cart?user_id=${user_id}&product_id=${product_id}`,
             headers: {
                 "Auth-Token": sessionStorage.getItem("session_string")
             },
@@ -172,7 +172,7 @@ $(document).ready(function() {
         const user_id = get_id_from_session_str(sessionStorage.getItem("session_string"));
 
         $.ajax({
-            url: `http://127.0.0.1:5000/get_cart_total?user_id=${user_id}`,
+            url: `https://namnguyen0123.pythonanywhere.com/get_cart_total?user_id=${user_id}`,
             headers: {
                 "Auth-Token": sessionStorage.getItem("session_string")
             },
@@ -193,7 +193,7 @@ $(document).ready(function() {
 
     function purchase_cart(user_id) {
         $.ajax({
-            url: "http://127.0.0.1:5000/purchase_product",
+            url: "https://namnguyen0123.pythonanywhere.com/purchase_product",
             headers: {
                 "Auth-Token": sessionStorage.getItem("session_string")
             },

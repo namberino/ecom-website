@@ -12,7 +12,7 @@ $(document).ready(function() {
     let session_string = sessionStorage.getItem("session_string");
     if (session_string != null && session_string != "") {
         $.ajax({
-            url: "http://127.0.0.1:5000/validate_session",
+            url: "https://namnguyen0123.pythonanywhere.com/validate_session",
             headers: {
                 "Auth-Token": session_string
             },
@@ -47,7 +47,7 @@ $(document).ready(function() {
     // account loading handling
     function load_accounts() {
         $.ajax({
-            url: "http://127.0.0.1:5000/get_accounts",
+            url: "https://namnguyen0123.pythonanywhere.com/get_accounts",
             headers: {
                 "Auth-Token": sessionStorage.getItem("session_string")
             },
@@ -112,7 +112,7 @@ $(document).ready(function() {
     function delete_account(account_id) {
         if (confirm("Are you sure you want to delete this account?")) {
             $.ajax({
-                url: `http://127.0.0.1:5000/delete_account?id=${account_id}`,
+                url: `https://namnguyen0123.pythonanywhere.com/delete_account?id=${account_id}`,
                 headers: {
                     "Auth-Token": sessionStorage.getItem("session_string")
                 },
@@ -134,7 +134,7 @@ $(document).ready(function() {
     // edit account handling
     function edit_account(account_id) {
         $.ajax({
-            url: `http://127.0.0.1:5000/get_account?id=${account_id}`,
+            url: `https://namnguyen0123.pythonanywhere.com/get_account?id=${account_id}`,
             headers: {
                 "Auth-Token": sessionStorage.getItem("session_string")
             },
@@ -191,7 +191,7 @@ $(document).ready(function() {
         const old_password = $("#edit-account-old-password").val();
 
         $.ajax({
-            url: "http://127.0.0.1:5000/edit_account",
+            url: "https://namnguyen0123.pythonanywhere.com/edit_account",
             headers: {
                 "Auth-Token": sessionStorage.getItem("session_string")
             },
@@ -233,7 +233,7 @@ $(document).ready(function() {
         const password = $("#create-account-password").val();
 
         $.ajax({
-            url: "http://127.0.0.1:5000/create_account",
+            url: "https://namnguyen0123.pythonanywhere.com/create_account",
             headers: {
                 "Auth-Token": sessionStorage.getItem("session_string")
             },

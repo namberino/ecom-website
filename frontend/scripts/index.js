@@ -25,7 +25,7 @@ $(document).ready(function() {
 
             if (email && password) {
                 $.ajax({
-                    url: "http://127.0.0.1:5000/login",
+                    url: "https://namnguyen0123.pythonanywhere.com/login",
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify({ email: email, password: password }),
@@ -68,7 +68,7 @@ $(document).ready(function() {
 
             if (name && email && password) {
                 $.ajax({
-                    url: "http://127.0.0.1:5000/register",
+                    url: "https://namnguyen0123.pythonanywhere.com/register",
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify({ name: name, email: email, password: password }),
