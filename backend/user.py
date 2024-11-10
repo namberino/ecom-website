@@ -3,9 +3,9 @@ from flask import request, jsonify
 import bcrypt
 
 
-@app.route("/get_info_from_session", methods=["POST"])
+@app.route("/get_info_from_session", methods=["GET"])
 def get_info_from_session():
-    encrypted_session_str = request.json["session_string"]
+    encrypted_session_str = request.headers["Auth-Token"]
     session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
@@ -28,15 +28,21 @@ def user_edit_info():
     email = request.json["email"]
     old_password = request.json.get("old_password", "")
     new_password = request.json.get("new_password", "")
+    encrypted_session_str = request.headers["Auth-Token"]
+    session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     if not name or not email:
         return jsonify({"status": "fail", "message": "Name and email must not be empty!"})
 
     cursor = db.cursor()
 
+    cursor.execute("select * from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    valid_session_str = cursor.fetchone()
+    if not valid_session_str:
+        return jsonify({"status": "fail", "message": "Invalid user session."})
+
     cursor.execute("select * from Users where email = %s and not id = %s", (email, account_id))
     existing_account = cursor.fetchone()
-
     if existing_account:
         return jsonify({"status": "fail", "message": "Email is already associated with another account."})
 
@@ -68,8 +74,19 @@ def add_to_cart():
     product_id = request.json["product_id"]
     account_id = request.json["user_id"]
     amount = request.json["amount"]
+    encrypted_session_str = request.headers["Auth-Token"]
+    session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
+
+    cursor.execute("select id from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    valid_session_str = cursor.fetchone()
+
+    if not valid_session_str:
+        return jsonify({"status": "fail", "message": "Invalid user session."})
+
+    if valid_session_str[0] != int(account_id):
+        return jsonify({"status": "fail", "message": "User session doesn't match user request."})
 
     cursor.execute("select amount from Products where id = %s", (product_id,))
     stock_amount = cursor.fetchone()
@@ -100,8 +117,19 @@ def add_to_cart():
 @app.route("/get_cart", methods=["GET"])
 def get_cart():
     user_id = request.args.get("id")
+    encrypted_session_str = request.headers["Auth-Token"]
+    session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
+
+    cursor.execute("select id from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    valid_session_str = cursor.fetchone()
+
+    if not valid_session_str:
+        return jsonify({"status": "fail", "message": "Invalid user session."})
+
+    if valid_session_str[0] != int(user_id):
+        return jsonify({"status": "fail", "message": "User session doesn't match user request."})
 
     cursor.execute("select product_id, name, price, Cart.amount from Cart join Products on Cart.product_id = Products.id where user_id = %s", (user_id,))
     products = cursor.fetchall()
@@ -127,8 +155,19 @@ def get_cart():
 def del_product_from_cart():
     user_id = request.args.get("user_id")
     product_id = request.args.get("product_id")
+    encrypted_session_str = request.headers["Auth-Token"]
+    session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
+
+    cursor.execute("select id from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    valid_session_str = cursor.fetchone()
+
+    if not valid_session_str:
+        return jsonify({"status": "fail", "message": "Invalid user session."})
+
+    if valid_session_str[0] != int(user_id):
+        return jsonify({"status": "fail", "message": "User session doesn't match user request."})
 
     cursor.execute("delete from Cart where user_id = %s and product_id = %s", (user_id, product_id))
     db.commit()
@@ -144,6 +183,8 @@ def update_product_in_cart():
     user_id = request.json["user_id"]
     product_id = request.json["product_id"]
     amount = request.json["amount"]
+    encrypted_session_str = request.headers["Auth-Token"]
+    session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     try:
         int(amount)
@@ -151,6 +192,15 @@ def update_product_in_cart():
         return jsonify({"status": "success", "message": "Amount must be an integer."})
 
     cursor = db.cursor()
+
+    cursor.execute("select id from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    valid_session_str = cursor.fetchone()
+
+    if not valid_session_str:
+        return jsonify({"status": "fail", "message": "Invalid user session."})
+
+    if valid_session_str[0] != int(user_id):
+        return jsonify({"status": "fail", "message": "User session doesn't match user request."})
 
     cursor.execute("select amount from Products where id = %s", (product_id,))
     stock_amount = cursor.fetchone()
@@ -170,8 +220,20 @@ def update_product_in_cart():
 @app.route("/get_cart_total", methods=["GET"])
 def get_cart_total():
     user_id = request.args.get("user_id")
+    encrypted_session_str = request.headers["Auth-Token"]
+    session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
+
+    cursor.execute("select id from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    valid_session_str = cursor.fetchone()
+
+    if not valid_session_str:
+        return jsonify({"status": "fail", "message": "Invalid user session."})
+
+    if valid_session_str[0] != int(user_id):
+        return jsonify({"status": "fail", "message": "User session doesn't match user request."})
+
     cursor.execute("select Products.price, Cart.amount from Products join Cart on Products.id = Cart.product_id where Cart.user_id = %s", (user_id,))
     prices = cursor.fetchall()
 
@@ -189,8 +251,19 @@ def get_cart_total():
 @app.route("/purchase_product", methods=["POST"])
 def purchase_product():
     user_id = request.json["user_id"]
+    encrypted_session_str = request.headers["Auth-Token"]
+    session_str = decrypt_session_string(encrypted_session_str).split(";")
 
     cursor = db.cursor()
+
+    cursor.execute("select id from Users where email = %s and password = %s and role = %s", (session_str[0], session_str[1], session_str[2]))
+    valid_session_str = cursor.fetchone()
+
+    if not valid_session_str:
+        return jsonify({"status": "fail", "message": "Invalid user session."})
+
+    if valid_session_str[0] != int(user_id):
+        return jsonify({"status": "fail", "message": "User session doesn't match user request."})
 
     cursor.execute("select product_id, amount from Cart where user_id = %s", (user_id,))
     products = cursor.fetchall()

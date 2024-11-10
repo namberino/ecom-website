@@ -13,9 +13,11 @@ $(document).ready(function() {
     if (session_string != null && session_string != "") {
         $.ajax({
             url: "http://127.0.0.1:5000/validate_session",
+            headers: {
+                "Auth-Token": session_string
+            },
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ session_string: session_string }),
             success: function(response) {
                 // alert(response.message);
                 if (response.status == "fail") {
@@ -42,10 +44,12 @@ $(document).ready(function() {
         
         $.ajax({
             url: "http://127.0.0.1:5000/get_info_from_session",
-            type: "POST",
+            headers: {
+                "Auth-Token": session_string
+            },
+            type: "GET",
             contentType: "application/json",
             async: false,
-            data: JSON.stringify({ session_string: session_string }),
             success: function(response) {
                 if (response.status == "success") {
                     const account = response.account;
@@ -67,6 +71,9 @@ $(document).ready(function() {
 
         $.ajax({
             url: `http://127.0.0.1:5000/get_cart?id=${user_id}`,
+            headers: {
+                "Auth-Token": sessionStorage.getItem("session_string")
+            },
             type: "GET",
             success: function(response) {
                 if (response.status === "success") {
@@ -119,6 +126,9 @@ $(document).ready(function() {
     function update_amount(user_id, product_id, amount) {
         $.ajax({
             url: "http://127.0.0.1:5000/update_product_in_cart",
+            headers: {
+                "Auth-Token": sessionStorage.getItem("session_string")
+            },
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({user_id: user_id, product_id: product_id, amount: amount}),
@@ -139,6 +149,9 @@ $(document).ready(function() {
     function del_prod_from_cart(user_id, product_id) {
         $.ajax({
             url: `http://127.0.0.1:5000/del_product_from_cart?user_id=${user_id}&product_id=${product_id}`,
+            headers: {
+                "Auth-Token": sessionStorage.getItem("session_string")
+            },
             type: "DELETE",
             success: function(response) {
                 if (response.status == "success") {
@@ -160,6 +173,9 @@ $(document).ready(function() {
 
         $.ajax({
             url: `http://127.0.0.1:5000/get_cart_total?user_id=${user_id}`,
+            headers: {
+                "Auth-Token": sessionStorage.getItem("session_string")
+            },
             type: "GET",
             async: false,
             success: function(response) {
@@ -178,6 +194,9 @@ $(document).ready(function() {
     function purchase_cart(user_id) {
         $.ajax({
             url: "http://127.0.0.1:5000/purchase_product",
+            headers: {
+                "Auth-Token": sessionStorage.getItem("session_string")
+            },
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({user_id: user_id}),

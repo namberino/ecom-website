@@ -13,9 +13,11 @@ $(document).ready(function() {
     if (session_string != null && session_string != "") {
         $.ajax({
             url: "http://127.0.0.1:5000/validate_session",
+            headers: {
+                "Auth-Token": session_string
+            },
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ session_string: session_string }),
             success: function(response) {
                 // alert(response.message);
                 if (response.status == "fail") {

@@ -13,9 +13,11 @@ $(document).ready(function() {
     if (session_string != null && session_string != "") {
         $.ajax({
             url: "http://127.0.0.1:5000/validate_session",
+            headers: {
+                "Auth-Token": session_string
+            },
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ session_string: session_string }),
             success: function(response) {
                 // alert(response.message);
                 if (response.status == "fail") {
@@ -91,10 +93,12 @@ $(document).ready(function() {
         
         $.ajax({
             url: "http://127.0.0.1:5000/get_info_from_session",
-            type: "POST",
+            headers: {
+                "Auth-Token": session_string
+            },
+            type: "GET",
             contentType: "application/json",
             async: false,
-            data: JSON.stringify({ session_string: session_string }),
             success: function(response) {
                 if (response.status == "success") {
                     const account = response.account;
@@ -114,6 +118,9 @@ $(document).ready(function() {
 
         $.ajax({
             url: "http://127.0.0.1:5000/add_to_cart",
+            headers: {
+                "Auth-Token": sessionStorage.getItem("session_string")
+            },
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({ product_id: product_id, user_id: user_id, amount: amount }),

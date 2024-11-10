@@ -26,7 +26,10 @@ def get_products():
 
 @app.route("/get_product", methods=["POST"])
 def get_product():
-    product_id = request.json["id"]
+    try:
+        product_id = request.json["id"]
+    except:
+        return ({"status": "fail", "message": "Invalid amount of variables."})
 
     cursor = db.cursor()
 
