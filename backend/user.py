@@ -344,6 +344,9 @@ def purchase_product():
         cursor.execute("select amount from Products where id = %s", (product[0],))
         amount = cursor.fetchone()
 
+        if (product[1] > amount[0]):
+            return jsonify({"status": "fail", "message": "Not enough product for purchase."})
+
         cursor.execute("update Products set amount = %s where id = %s", (int(amount[0]) - int(product[1]), product[0]))
         db.commit()
 
